@@ -356,8 +356,12 @@ Hook → Pre-turn monitoring → Token estimation → Threshold check → System
 **Workspace:** `/root/.openclaw/workspace/`
 
 **Git repository:**
-- Remote: (if configured)
-- Local workspace tracked
+- Remote: https://github.com/Aymanjohani/Flux.git
+- SSH key: `/root/.ssh/flux_github` (ed25519, deploy key with write access)
+- Commit identity: Flux <coding@iiotsolutions.sa>
+- Branch: master
+- Configured: 2026-02-04
+- Security: Sensitive files excluded (.gitignore covers config/, API keys, OAuth tokens)
 
 **Models:**
 - Default: google/gemini-2.5-pro
@@ -382,6 +386,7 @@ Hook → Pre-turn monitoring → Token estimation → Threshold check → System
 | **Telegram** | ✅ Active | Primary comms | Gateway config |
 | **Browser** | ✅ Active | Web automation | OpenClaw tool |
 | **SSH Alerts** | ✅ Active | Security monitoring | /var/log/ |
+| **GitHub** | ✅ Active | Version control | github.com/Aymanjohani/Flux |
 
 ---
 
