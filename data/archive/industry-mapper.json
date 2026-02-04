@@ -1,0 +1,17 @@
+{
+  "صناعة المعادن": "MINING_METALS",
+  "القطاعات أخرى": "INDUSTRIAL_AUTOMATION",
+  "الأغذية": "FOOD_PRODUCTION",
+  "الكيماويات الأساسية والمتوسطة": "CHEMICALS",
+  "منتجات البلاستيك والمطاط": "PLASTICS",
+  "مواد البناء": "BUILDING_MATERIALS",
+  "الالات والمعدات": "MACHINERY",
+  "الادوية": "PHARMACEUTICALS",
+  "النسيج والملابس": "TEXTILES",
+  "الأجهزة الإلكترونية": "ELECTRICAL_ELECTRONIC_MANUFACTURING",
+  "الورق": "PAPER_FOREST_PRODUCTS",
+  "الاثاث": "FURNITURE",
+  "التغليف": "PACKAGING_AND_CONTAINERS",
+  "الطباعة": "PRINTING",
+  "المشروبات": "FOOD_BEVERAGES"
+}

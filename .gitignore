@@ -13,9 +13,16 @@ downloads/
 *.log
 
 # Sensitive
+config/
 config.yml
 *.env
 .env.*
+*-token.txt
+*-key.txt
+*.json.secret
+
+# Voice demo with hardcoded keys (temp project)
+projects/voice-agent-demo/**/*.py
 
 # OS
 .DS_Store

@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "skills": {
+    "clawwhub": {
+      "version": "1.0.1",
+      "installedAt": 1769889631082
+    },
+    "todoist": {
+      "version": "0.2.1",
+      "installedAt": 1769893573311
+    },
+    "hubspot": {
+      "version": "1.0.0",
+      "installedAt": 1769980760069
+    },
+    "daily-review-ritual": {
+      "version": "1.0.0",
+      "installedAt": 1770055964753
+    },
+    "hybrid-memory": {
+      "version": "1.0.1",
+      "installedAt": 1770055974947
+    }
+  }
+}
