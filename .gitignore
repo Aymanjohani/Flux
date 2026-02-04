@@ -24,6 +24,9 @@ config.yml
 # Voice demo with hardcoded keys (temp project)
 projects/voice-agent-demo/**/*.py
 
+# Memory files may contain API keys from logs
+memory/2026-02-01.md
+
 # OS
 .DS_Store
 Thumbs.db
