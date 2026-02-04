@@ -1,0 +1,69 @@
+#!/bin/bash
+# ask — Integrated check-before-ask workflow
+# Usage: ./scripts/ask "your question"
+#
+# This script:
+# 1. Searches all knowledge sources
+# 2. Logs the pattern (found vs not-found)
+# 3. Provides verdict (safe to ask or answer exists)
+
+set -euo pipefail
+
+if [[ $# -eq 0 ]]; then
+    echo "Usage: ./scripts/ask \"your question\""
+    echo ""
+    echo "Examples:"
+    echo "  ./scripts/ask \"What's Ayman's email?\""
+    echo "  ./scripts/ask \"HubSpot API key\""
+    echo ""
+    exit 1
+fi
+
+QUESTION="$1"
+WORKSPACE="/root/.openclaw/workspace"
+
+# Run the check
+echo "🔍 Running pre-flight check..."
+echo ""
+
+if "$WORKSPACE/scripts/check-before-ask.sh" "$QUESTION" 2>&1 | tee /tmp/ask-check.log; then
+    # No matches found — safe to ask
+    RESULT="not-found"
+    SOURCE="none"
+    VERDICT="✓ SAFE TO ASK"
+else
+    # Matches found
+    RESULT="found"
+    
+    # Determine source from output
+    if grep -q "FOUND in config" /tmp/ask-check.log; then
+        SOURCE="gateway-config"
+    elif grep -q "FOUND in vector memory" /tmp/ask-check.log; then
+        SOURCE="vector-memory"
+    elif grep -q "FOUND in.*\.md" /tmp/ask-check.log; then
+        SOURCE="files"
+    elif grep -q "FOUND in recent logs" /tmp/ask-check.log; then
+        SOURCE="daily-logs"
+    elif grep -q "FOUND in ~/.bashrc" /tmp/ask-check.log; then
+        SOURCE="bashrc"
+    else
+        SOURCE="unknown"
+    fi
+    
+    VERDICT="⚠️  ANSWER EXISTS — Review above"
+fi
+
+# Log the pattern
+"$WORKSPACE/scripts/ask-pattern-logger.sh" log "$QUESTION" "$RESULT" "$SOURCE" >/dev/null 2>&1
+
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "$VERDICT"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+# Exit code matches check result
+if [[ "$RESULT" == "found" ]]; then
+    exit 1
+else
+    exit 0
+fi

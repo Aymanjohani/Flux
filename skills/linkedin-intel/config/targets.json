@@ -1,0 +1,134 @@
+{
+  "focus": "SME (Small and Medium Enterprises) in Saudi industrial sector",
+  "target_categories": {
+    "potential_clients": {
+      "description": "SME manufacturers and industrial facilities that could benefit from IIoT/MES/SCADA solutions",
+      "signals": [
+        "Manufacturing company 50-500 employees",
+        "Digital transformation mentions",
+        "Quality/efficiency improvement initiatives",
+        "Industry 4.0 interest",
+        "SIRI assessment mentions",
+        "New facility or expansion",
+        "Production bottleneck complaints",
+        "Manual process pain points"
+      ],
+      "companies": [
+        "Saudi Steel Pipe Company",
+        "Yanbu Cement Company",
+        "Saudi Ceramic Company",
+        "Hail Agricultural Development Company",
+        "National Metal Manufacturing & Casting Company",
+        "Saudi Paper Manufacturing Company",
+        "Arabian Bemco Contracting",
+        "United Wire Factories Company"
+      ]
+    },
+    "competitors": {
+      "description": "Companies offering similar IIoT/MES/SCADA/digitalization services",
+      "companies": [
+        "Siemens Saudi Arabia",
+        "ABB Saudi Arabia",
+        "Schneider Electric KSA",
+        "Rockwell Automation",
+        "Emerson Middle East",
+        "Honeywell Saudi Arabia",
+        "Yokogawa Saudi Arabia",
+        "GE Digital Saudi Arabia"
+      ],
+      "track": [
+        "Project wins",
+        "New partnerships",
+        "Product launches",
+        "Pricing strategies",
+        "Marketing campaigns",
+        "Client testimonials"
+      ]
+    },
+    "potential_partners": {
+      "description": "Companies we could collaborate with for joint solutions or referrals",
+      "companies": [
+        "Intek Digital Solutions",
+        "MODON (Saudi Industrial Property Authority)",
+        "Giza Systems",
+        "SAP Saudi Arabia",
+        "Microsoft Saudi Arabia",
+        "Oracle Saudi Arabia",
+        "Local ERP implementers",
+        "Industrial equipment suppliers",
+        "System integrators"
+      ],
+      "signals": [
+        "Complementary service offerings",
+        "Looking for technology partners",
+        "Joint project opportunities",
+        "Channel partner programs",
+        "Referral network building"
+      ]
+    }
+  },
+  "hashtags": {
+    "primary_saudi": [
+      "#IndustryKSA",
+      "#SaudiManufacturing",
+      "#SIRI",
+      "#VisionKSA",
+      "#Vision2030",
+      "#Industry40Saudi",
+      "#DigitalTransformationKSA",
+      "#MadeInSaudi",
+      "#MODON"
+    ],
+    "technology": [
+      "#MES",
+      "#SCADA",
+      "#IIoT",
+      "#SmartFactory",
+      "#Industry40",
+      "#IndustrialAutomation",
+      "#ManufacturingExcellence",
+      "#OEE",
+      "#PredictiveMaintenance"
+    ],
+    "sme_signals": [
+      "#SME",
+      "#SMESaudi",
+      "#SmallBusiness",
+      "#MidMarket",
+      "#Manufacturing",
+      "#FactoryAutomation"
+    ]
+  },
+  "priority_signals": {
+    "hot_leads": [
+      "Looking for MES solution",
+      "Need SCADA implementation",
+      "Digital transformation project",
+      "ERP integration needed",
+      "SIRI assessment",
+      "Industry 4.0 roadmap",
+      "Production monitoring system",
+      "Quality management system",
+      "Real-time production tracking"
+    ],
+    "medium_priority": [
+      "Hiring IIoT engineer",
+      "Hiring digital transformation manager",
+      "New CIO/CTO appointment",
+      "Factory expansion announcement",
+      "New production line",
+      "ISO certification project",
+      "Lean manufacturing initiative",
+      "Six Sigma project"
+    ]
+  },
+  "geographic_focus": [
+    "Jeddah",
+    "Riyadh",
+    "Dammam",
+    "Jubail",
+    "Yanbu",
+    "Rabigh",
+    "Saudi Arabia"
+  ]
+}

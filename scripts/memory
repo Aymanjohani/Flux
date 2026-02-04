@@ -1,0 +1,21 @@
+#!/bin/bash
+# Flux-Lite Memory System CLI Wrapper
+# Automatically loads GEMINI_API_KEY from OpenClaw config
+
+set -e
+
+# Extract Gemini API key from OpenClaw config
+GEMINI_API_KEY=$(cat ~/.openclaw/openclaw.json | grep -A 1 '"memorySearch"' -A 10 | grep '"apiKey"' | cut -d'"' -f4)
+
+if [ -z "$GEMINI_API_KEY" ]; then
+    echo "❌ Error: GEMINI_API_KEY not found in OpenClaw config"
+    exit 1
+fi
+
+export GEMINI_API_KEY
+
+# Get the directory where this script is located
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# Run the memory engine
+node "$SCRIPT_DIR/memory_engine.js" "$@"

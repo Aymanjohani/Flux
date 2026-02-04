@@ -1,0 +1,15 @@
+# Virtual environment
+venv/
+
+# Confidential data
+config/credentials.json
+config/rate-state.json
+config/session.json
+output/*.md
+*.log
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/

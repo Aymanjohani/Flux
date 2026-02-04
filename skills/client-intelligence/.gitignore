@@ -1,0 +1,8 @@
+# Client Intelligence - Do not commit research output
+output/
+*.json
+*-brief.md
+*-raw.json
+
+# Keep the directory structure
+!output/.gitkeep

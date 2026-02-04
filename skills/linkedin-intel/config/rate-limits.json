@@ -1,0 +1,7 @@
+{
+  "max_requests_per_hour": 50,
+  "max_requests_per_day": 200,
+  "min_delay_seconds": 3,
+  "max_delay_seconds": 8,
+  "session_duration_minutes": 45
+}

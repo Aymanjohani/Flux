@@ -1,0 +1,226 @@
+{
+  "version": 2,
+  "updatedAt": "2026-02-02T07:30:00Z",
+  "facts": {
+    "user.name": {
+      "value": "Ayman",
+      "updatedAt": "2026-01-31",
+      "source": "USER.md"
+    },
+    "user.role": {
+      "value": "CEO of IIoT Solutions",
+      "updatedAt": "2026-01-31",
+      "source": "USER.md"
+    },
+    "user.location": {
+      "value": "Jeddah, Saudi Arabia",
+      "updatedAt": "2026-01-31",
+      "source": "USER.md"
+    },
+    "user.timezone": {
+      "value": "AST (UTC+3)",
+      "updatedAt": "2026-01-31",
+      "source": "USER.md"
+    },
+    "company.name": {
+      "value": "IIoT Solutions",
+      "updatedAt": "2026-01-31",
+      "source": "IDENTITY.md"
+    },
+    "server.location": {
+      "value": "France (Hostinger)",
+      "updatedAt": "2026-02-01",
+      "source": "user correction"
+    },
+    "server.ip": {
+      "value": "76.13.32.56",
+      "updatedAt": "2026-01-31",
+      "source": "setup"
+    },
+    "integrations.memorySearch": {
+      "value": "enabled (Gemini)",
+      "updatedAt": "2026-02-01",
+      "source": "config"
+    },
+    "integrations.braveSearch": {
+      "value": "enabled",
+      "updatedAt": "2026-01-31",
+      "source": "config"
+    },
+    "integrations.todoist": {
+      "value": "connected (Ayman's account - seat cost issue)",
+      "updatedAt": "2026-02-01",
+      "source": "Ayman decision"
+    },
+    "integrations.stt": {
+      "value": "enabled (Groq whisper-large-v3-turbo)",
+      "updatedAt": "2026-02-01",
+      "source": "config verified"
+    },
+    "integrations.email": {
+      "value": "coding@iiotsolutions.sa (enabled, read+send, Gmail API)",
+      "updatedAt": "2026-02-02T07:01:00Z",
+      "source": "Re-authorized with gmail.send scope - tested successfully"
+    },
+    "integrations.calendar": {
+      "value": "coding@iiotsolutions.sa (enabled, view/create events)",
+      "updatedAt": "2026-02-01T19:08:00Z",
+      "source": "Google Calendar API enabled"
+    },
+    "integrations.recallai": {
+      "value": "enabled (ayman@iiotsolutions.sa, EU region)",
+      "updatedAt": "2026-02-01T19:50:00Z",
+      "source": "Meeting bot tested - join, speak, record, transcribe all working"
+    },
+    "integrations.drive": {
+      "value": "not approved",
+      "updatedAt": "2026-02-01",
+      "source": "Ayman decision"
+    },
+    "integrations.hubspot": {
+      "value": "enabled (Legacy Private App, EU region, full CRM access)",
+      "updatedAt": "2026-02-02T06:31:00Z",
+      "source": "Configured by Ayman - Portal 147149295"
+    },
+    "integrations.linkedinIntel": {
+      "value": "enabled (coding@iiotsolutions.sa, cookie-based auth, nightly runs)",
+      "updatedAt": "2026-02-02T06:20:00Z",
+      "source": "Browser automation deployed for SME market intelligence"
+    },
+    "services.siri": {
+      "value": "INCIT-certified only (Amr, Aadil). Portal-generated reports. 8-12K SAR. Requires on-site visit.",
+      "updatedAt": "2026-02-01",
+      "source": "Ayman correction"
+    },
+    "systems.financialDashboard": {
+      "value": "https://dashboard.iiotsolutions.sa (Google SSO, @iiotsolutions.sa only)",
+      "updatedAt": "2026-02-01T20:30:00Z",
+      "source": "Aadil - two-system design (financials + Todoist operations)"
+    },
+    "decisions.todoist": {
+      "value": "Don't restructure. Use existing 'Ayman-Aadil Tasks' project for shared work.",
+      "updatedAt": "2026-02-01T20:30:00Z",
+      "source": "CEO decision from Ayman-Aadil meeting"
+    },
+    "analysis.hubspot_pipeline": {
+      "value": "SAR 1.94M active (15 deals), SAR 910K closed won (7 deals), SAR 1.24M closed lost (3 deals, no reasons). 23% stale rate, SIRI economics issue, team imbalance.",
+      "updatedAt": "2026-02-03T13:50:00Z",
+      "source": "Comprehensive analysis by Flux"
+    },
+    "analysis.todoist": {
+      "value": "51 active tasks, 38 projects (13 empty). Critical: 96% tasks have no due dates. Vague tasks, no ownership visibility, no accountability.",
+      "updatedAt": "2026-02-03T13:50:00Z",
+      "source": "Comprehensive analysis by Flux"
+    },
+    "proposals.todoist_restructure": {
+      "value": "Clean slate approach: Delete all, rebuild with 6 functional areas (Sales, Delivery, Dev, Ops, Marketing, Leadership). Mandatory standards, weekly reviews, Flux automation.",
+      "updatedAt": "2026-02-03T13:50:00Z",
+      "source": "Proposal sent to Aadil for decision"
+    },
+    "documentation.todoist_guide": {
+      "value": "18KB team usage guide created (standards, workflows, best practices). Shared with Ayman, Aadil, Mreefah.",
+      "updatedAt": "2026-02-03T13:50:00Z",
+      "source": "docs/todoist-team-guide.md"
+    }
+  },
+  "invalidated": [
+    {
+      "key": "integrations.todoist",
+      "oldValue": "connected (shared account)",
+      "invalidatedAt": "2026-02-01",
+      "reason": "clarified - using Ayman's account due to seat cost"
+    }
+  ],
+  "contacts": {
+    "ayman": {
+      "telegram_id": 1186936952,
+      "role": "CEO"
+    },
+    "aadil": {
+      "telegram_id": 124756960,
+      "telegram_handle": "@AadilFeroze_92",
+      "role": "CTO"
+    }
+  },
+  "pendingItems": [
+    "Fix memory_engine.js Gemini→Claude fallback (dream cron failed on quota)",
+    "Debug LinkedIn Intelligence script timeout (SIGKILL at 300s)",
+    "Clean up 3 test bots from Recall.ai",
+    "Production voice bot setup (prototype proven, needs stable hosting)",
+    "Todoist restructure - waiting for Aadil feedback on clean slate approach (sent 2026-02-03)",
+    "Schedule 30-min planning session with Aadil for Todoist adoption plan"
+  ],
+  "completedItems": [
+    {
+      "item": "LinkedIn Intelligence System",
+      "completedAt": "2026-02-02T06:20:00Z",
+      "outcome": "Browser automation deployed with cookie-based auth, nightly runs at 2 AM Riyadh"
+    },
+    {
+      "item": "HubSpot API access",
+      "completedAt": "2026-02-02T06:31:00Z",
+      "outcome": "Access granted - Legacy Private App created by Ayman, full CRM access"
+    },
+    {
+      "item": "Gmail send permissions",
+      "completedAt": "2026-02-02T07:01:00Z",
+      "outcome": "Re-authorized with Aadil's help, gmail.send scope added"
+    },
+    {
+      "item": "Sales Intelligence Skill",
+      "completedAt": "2026-02-02T07:18:00Z",
+      "outcome": "Comprehensive sales ops system integrating HubSpot, Recall.ai, Gmail, Calendar"
+    },
+    {
+      "item": "System Hardening - 7 structural issues",
+      "completedAt": "2026-02-02T07:38:00Z",
+      "outcome": "Fixed vector DB, state.json, dream script, auto-save cleanup, file locking, session-end validation"
+    },
+    {
+      "item": "Context Optimization",
+      "completedAt": "2026-02-02T07:48:00Z",
+      "outcome": "Reduced from 72k to ~15k tokens, established size limits for bootstrap files"
+    },
+    {
+      "item": "Voice Bot Prototype",
+      "completedAt": "2026-02-02T10:00:00Z",
+      "outcome": "Recall.ai + OpenAI Realtime API working, needs production hosting for quality"
+    },
+    {
+      "item": "KESWA Meeting Transcription",
+      "completedAt": "2026-02-02T11:45:00Z",
+      "outcome": "Recorded, transcribed via Whisper, summary emailed to all attendees"
+    },
+    {
+      "item": "Communication Guidelines",
+      "completedAt": "2026-02-02T15:11:00Z",
+      "outcome": "Created professional standards for newsletters, emails, tone, validation"
+    },
+    {
+      "item": "Self-Development Framework",
+      "completedAt": "2026-02-02T15:22:00Z",
+      "outcome": "Capabilities, goals, evolution tracking established. First weekly review completed."
+    },
+    {
+      "item": "Todoist restructure decision",
+      "completedAt": "2026-02-01T20:30:00Z",
+      "outcome": "CEO decision: Don't restructure, use existing 'Ayman-Aadil Tasks'"
+    },
+    {
+      "item": "Project Portfolio Analysis (HubSpot + Todoist)",
+      "completedAt": "2026-02-03T13:50:00Z",
+      "outcome": "26 HubSpot deals (SAR 1.94M pipeline), 51 Todoist tasks analyzed. Found systemic discipline issues: 96% tasks no due dates, 23% deals stale."
+    },
+    {
+      "item": "Todoist Team Usage Guide",
+      "completedAt": "2026-02-03T13:50:00Z",
+      "outcome": "18KB comprehensive guide created: standards, workflows, best practices. Shared with Ayman, Aadil, Mreefah."
+    },
+    {
+      "item": "Todoist Restructure Proposal",
+      "completedAt": "2026-02-03T13:50:00Z",
+      "outcome": "15KB clean slate architecture proposal by function. Sent to Aadil for review and decision."
+    }
+  ],
+  "pendingForwards": []
+}
