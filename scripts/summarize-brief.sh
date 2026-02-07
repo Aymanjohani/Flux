@@ -13,7 +13,10 @@ MEMORY_DIR="$WORKSPACE/memory"
 TODAY_BRIEF="$MEMORY_DIR/today-brief.md"
 SUMMARIES_DIR="$MEMORY_DIR/summaries"
 LOG_FILE="/root/.openclaw/logs/memory-cron.log"
-GATEWAY_URL="http://127.0.0.1:18789"
+# Load OPENAI_API_KEY from openclaw.json if not set
+if [ -z "${OPENAI_API_KEY:-}" ]; then
+    OPENAI_API_KEY=$(node -e "console.log(require('/root/.openclaw/openclaw.json').env.vars.OPENAI_API_KEY)" 2>/dev/null) || true
+fi
 
 DATE=$(date +"%Y-%m-%d")
 HOUR=$(date +"%H")
@@ -50,14 +53,20 @@ log "Generating summary via LLM..."
 # Extract content to summarize
 BRIEF_CONTENT=$(cat "$TODAY_BRIEF" | head -c 15000)
 
-# Call LLM for summarization
-SUMMARY=$(curl -s -X POST "$GATEWAY_URL/api/complete" \
+# Call OpenAI API for summarization
+SUMMARY=$(curl -s -X POST "https://api.openai.com/v1/chat/completions" \
     -H "Content-Type: application/json" \
+    -H "Authorization: Bearer $OPENAI_API_KEY" \
     -d "$(jq -n --arg content "$BRIEF_CONTENT" '{
-        "prompt": ("Summarize the following daily brief into a concise 6-hour summary. Focus on: decisions made, tasks completed, key discussions, and pending items. Keep it under 500 words.\n\n" + $content + "\n\nSummary:"),
-        "max_tokens": 1000
+        "model": "gpt-4o-mini",
+        "messages": [
+            {"role": "system", "content": "You are a concise summarizer for a daily work brief. Focus on: decisions made, tasks completed, key discussions, and pending items. Keep it under 500 words."},
+            {"role": "user", "content": ("Summarize the following daily brief into a concise 6-hour summary:\n\n" + $content)}
+        ],
+        "max_tokens": 1000,
+        "temperature": 0.3
     }')" \
-    --max-time 60 2>/dev/null | jq -r '.completion // empty') || true
+    --max-time 60 2>/dev/null | jq -r '.choices[0].message.content // empty') || true
 
 # If LLM fails, create a simple extraction
 if [ -z "$SUMMARY" ]; then

@@ -1,111 +1,76 @@
-# Today Brief — 2026-02-06 (Friday)
-
-## ✅ Completed: Weekly Self-Review
-
-**Time:** 03:37-04:00 UTC (6:37-7:00 AM Riyadh)
-
-**Deliverables:**
-- Weekly review written: `memory/weekly-reviews/2026-02-07.md` (7KB)
-- Capabilities updated: `memory/capabilities.md`
-- Goals updated: `memory/goals.md`
-- Summary sent to Ayman via Telegram (message ID: 2764)
-
-**Key Findings:**
-- Technical capability: ⭐⭐⭐⭐ Strong
-- Operational discipline: ⭐⭐ Weak
-- Core issue: Build good systems but don't use them consistently
-
-**Priority this week:**
-1. Make memory retrieval reflexive
-2. Verify before claiming "done"
-3. Follow checkpoint protocol
-4. Start cognitive architecture research
+# Today Brief — 2026-02-07 (Saturday)
 
 ---
 
-## ✅ RESOLVED: Embedding Model Fixed
-
-**Discovered:** During weekly review (04:00 UTC)
-**Error:** `text-embedding-004 is not found for API version v1beta`
-**Fix (P0):** Migrated to OpenAI text-embedding-3-small (1536 dims). All ingestion working.
-**Verified:** ayman.md (8 chunks), aadil.md (7 chunks) ingested successfully.
+*Previous content (automation pipeline reconnection) archived to summaries/2026-02-07-1900.md at 19:07 UTC*
 
 ---
 
-## 🔴 CRITICAL: Balhamar Resource Sourcing (Feb 18 Deadline)
+## Automation Pipeline Verified Working
 
-Still active from previous days. Hardware ready Feb 18, must have automation engineer secured.
+- LLM summarization test passed — generated proper structured summary via OpenAI gpt-4o-mini
+- Memory pipeline crons installed and verified
+- Token-threshold hook deployed
+- Feb 6 chapter backfilled and vectorized (9 chunks)
+- Book outline updated through Chapter 7
 
----
+## RBAC Authorization System — DONE
 
-## ✅ Completed: Memory System Audit & Architecture Plan (~19:30 UTC)
+- Built 3-tier role model: Admin → Manager → User with 5 feature groups (memory, crm, config, comms, admin)
+- Created `config/permissions.json` (feature group definitions) and `config/roles.json` (user registry)
+- Created `hooks/internal/authorization/rbac.js` (core engine), `commands.js` (7 slash commands), `index.js` (hook integration)
+- Email-based auth: `authorizeByEmail()` for Gmail hook sessions (`hook:gmail:*`)
+- Registered 4 users: Ayman (admin), Aadil (manager), Mreefah (user), Amr (user + extra CRM)
+- Enforcement: advisory (injected into system prompt), not hard-blocking
+- Updated `openclaw.json` with `"authorization": { "enabled": true }`
 
-- Full audit of vector DB (672 chunks), pipeline scripts, cron config, monitoring infra
-- Identified Gemini→OpenAI migration issues, cron pipeline failures
-- Designed comprehensive P0-P6 + F1-F8 architecture plan
-- Created `scripts/memory` CLI wrapper
+## Pipeline Health Watchdog — DONE
 
----
+- Created `scripts/pipeline-health-watchdog.sh` — monitors summarize-brief, daily chapters, today-brief staleness, vector DB, cron health
+- Alerts via Telegram with 12-hour cooldown
+- Cron: `0 */2 * * *` (every 2 hours)
 
-## ✅ Completed: P0-P6 Cognitive Architecture Upgrade (~20:30 UTC)
+## Session Cleanup — DONE
 
-7 features implemented in `memory_engine.js` (656→1032 lines):
-- **P0:** Cosine metric fix (search results went from 0-1 to 5)
-- **P1:** Hybrid search — vector + keyword fallback via `grepSemanticFiles()`
-- **P2:** Contradiction detection — `detectContradictions()` in dream()
-- **P3:** Temporal decay — exponential freshness weighting
-- **P4:** Proactive context assembly — `getContextFor()` + CLI `context` command
-- **P5:** Confidence scoring — flows through entire pipeline
-- **P6:** Relationship extraction — `extractRelationships()` + BFS `getRelated()`
+- Created `scripts/session-cleanup.js` — prunes stale hook/cron sessions, archives old transcripts
+- Cron: `15 */4 * * *` (every 4 hours)
 
----
+## Personal Briefing System (F2b) — DONE
 
-## ✅ Completed: F1-F8 Operational Intelligence Upgrade (~21:15 UTC)
+- Created `scripts/personal-briefing.js` — personalized Telegram DM with tasks + deals per team member
+- Added `deliverTelegramDM()` to `scripts/event-bus.js`
+- Updated `config/todoist-team.json` with telegram_ids (Mreefah, Amr) and hubspot_owner_ids (6 members)
+- Cron: `0 5 * * *` (8:00 AM Riyadh daily)
+- 4 active recipients: Ayman, Aadil, Mreefah, Amr
 
-8 features (memory_engine.js now 1230+ lines + 5 new scripts):
-- **F1:** `scripts/session-bootstrap.sh` — context loader, 2000 char cap
-- **F2:** `scripts/morning-briefing.js` — daily 8:30 AM Riyadh (Calendar, Todoist, HubSpot, Gmail, LinkedIn)
-- **F3:** `scripts/pipeline-watchdog.js` — weekly Monday 6:00 AM Riyadh (deal health, stale detection)
-- **F4:** `compactLessons()` — 3-tier lessons lifecycle, LLM dedup, auto-triggers at >500 lines
-- **F5:** `scripts/accountability-check.js` — Sunday 6:00 PM Riyadh (Todoist compliance scores)
-- **F6:** `scripts/meeting-prep.js` — daily 8:35 AM Riyadh (HubSpot company/deal lookup, memory context)
-- **F7:** User profiles populated (ayman.md, aadil.md) + `getUserProfile()` + CLI `profile` command
-- **F8:** 4 new cron jobs installed
+## Telegram Onboarding Pipeline — DONE
 
-**New cron schedule:**
-- `30 5 * * *` — morning-briefing.js
-- `35 5 * * *` — meeting-prep.js
-- `0 3 * * 1` — pipeline-watchdog.js
-- `0 15 * * 0` — accountability-check.js
+- Created `scripts/onboard-telegram.js` — sends HTML email introducing Flux + instructions to get Telegram user ID via @userinfobot
+- Created `scripts/set-telegram-id.js` — CLI: `node set-telegram-id.js <key> <id>` to update config
+- Renamed ahmad → hamza in todoist-team.json (Hamza Feroze, hamza@iiotsolutions.sa)
+- Cron: `0 7 8 2 *` — one-time Sunday Feb 8, 10:00 AM Riyadh → emails 5 team members
+- CCs ayman@iiotsolutions.sa on all onboarding emails
 
----
+## Also Today
+
+- Fixed GitHub push issue — Groq API key in `memory/2026-02-01.md` triggered secret scanning
+- Added Ayman's IP (51.252.140.81) to SSH whitelist — no more alerts for his logins
+- Documented all work in `memory/2026-02-07.md` and updated `memory/semantic/infrastructure.md`
 
 ## Pending from Previous Days
 
 - Module-based pricing model (meeting was Feb 4)
 - Todoist reform (waiting on Aadil's feedback)
 - HubSpot pipeline hygiene (6 stale SIRI deals)
+- Gmail Pub/Sub activation (needs `gcloud auth login` first)
 
-## Remaining from F1-F8
+## Upcoming
 
-- ~~Run `memory compact-lessons --dry-run` then execute (F8 cleanup)~~ ✅ Ran — nothing to archive (only 1 recent date-keyed section)
-- Auto-populate team profiles (Hamad, Amr, Mreefah, etc.)
-- ~~Ingest user profiles to vector DB once embedding model confirmed~~ ✅ Done — ayman.md (8 chunks), aadil.md (7 chunks)
+- **Sunday Feb 8, 10 AM Riyadh:** Onboarding emails auto-send to Hamad, Amro, Firas, Hamza, Abdulrahman
+- Collect Telegram ID replies → run `set-telegram-id.js` for each → remove one-time cron entry
+
+## Critical
+
+- Balhamar Resource Sourcing (Feb 18 Deadline) — hardware ready, must have automation engineer secured
 
 ---
-
-## ✅ Completed: E1-E6 Infrastructure Hardening & Event Architecture (~22:40 UTC)
-
-6 features implemented — hardening plumbing, adding event abstraction, email security:
-
-- **E1:** `scripts/event-bus.js` — publish/subscribe/notify/logEvent. JSONL event log in `memory/events/YYYY-MM-DD.jsonl`. Topic routing (alert→notify, report→notify+save, email→route, memory/system→log). Retry once on failure. Bash wrapper: `scripts/emit-event.sh`.
-- **E2:** `lockedWriteJSON()` in `memory_engine.js` — mkdir-based atomic file locking compatible with bash `file-lock.sh`. Same `/tmp/openclaw-locks/` dir, 30s timeout, 5min stale detection. All state.json writes now locked.
-- **E3:** Gmail Pub/Sub config in `openclaw.json` (hooks mapping, gemini-2.5-flash, `allowUnsafeExternalContent: false`). Setup script: `scripts/setup-gmail-pubsub.sh`. **Needs `gcloud auth login` first** (token expired).
-- **E4:** `scripts/email-processor.js` — sanitization (HTML strip, Unicode cleanup, base64 removal), injection pattern scanning (8 patterns), LLM classification with sandboxed prompt, event bus routing. Auto-reply ONLY to `@iiotsolutions.sa` (hardcoded domain allowlist). Raw body never leaves processor.
-- **E5:** 4 scripts migrated to event-bus (morning-briefing, pipeline-watchdog, accountability-check, meeting-prep). Backward compatible — falls back to curl if event-bus fails to load.
-- **E6:** Graph DB re-evaluation reminder cron for Feb 13 (8 AM Riyadh). User profiles ingested to vector DB.
-
-**Pending manual step:** Run `gcloud auth login` interactively, then `./scripts/setup-gmail-pubsub.sh` to activate Gmail push notifications.
-
-**New cron job:**
-- `0 5 13 2 *` — Graph DB re-evaluation reminder via emit-event.sh

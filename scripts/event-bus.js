@@ -74,6 +74,44 @@ function deliverTelegram(message) {
 }
 
 /**
+ * Send a DM to a specific Telegram user via Bot API
+ * @param {string} chatId - Telegram user chat ID
+ * @param {string} message - Message text to send
+ * @returns {boolean} true on success, false on failure
+ */
+function deliverTelegramDM(chatId, message) {
+  let botToken;
+  try {
+    const config = JSON.parse(fs.readFileSync('/root/.openclaw/openclaw.json', 'utf-8'));
+    botToken = config.channels.telegram.botToken;
+  } catch (e) {
+    console.error('[event-bus] Failed to read bot token:', e.message);
+    return false;
+  }
+
+  const payload = JSON.stringify({
+    chat_id: chatId,
+    text: message,
+    parse_mode: 'HTML'
+  });
+
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      execSync(
+        `curl -s -X POST "https://api.telegram.org/bot${botToken}/sendMessage" -H "Content-Type: application/json" -d ${JSON.stringify(payload)} --max-time 10`,
+        { encoding: 'utf8', timeout: 15000, stdio: ['pipe', 'pipe', 'pipe'] }
+      );
+      return true;
+    } catch (e) {
+      if (attempt === 0) {
+        execSync('sleep 2');
+      }
+    }
+  }
+  return false;
+}
+
+/**
  * Determine routing action based on topic prefix
  * @param {string} topic
  * @returns {string} 'notify' | 'notify+save' | 'log'
@@ -184,7 +222,7 @@ function logEvent(topic, payload, options = {}) {
 }
 
 // Export as module
-module.exports = { publish, subscribe, notify, logEvent };
+module.exports = { publish, subscribe, notify, logEvent, deliverTelegramDM };
 
 // CLI usage: node event-bus.js notify "test message"
 if (require.main === module) {

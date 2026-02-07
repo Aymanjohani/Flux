@@ -31,14 +31,15 @@
 - **Email:** hamad@iiotsolutions.sa
 - **Role:** Digital solutions & platform development
 
-### Ahmad Farooq — Developer
-- **Email:** ahmad@iiotsolutions.sa
+### Hamza Feroze — Developer
+- **Email:** hamza@iiotsolutions.sa
 - **Role:** Software development
 
 ## Business Development
 
 ### Amr Elmayergy — BD Manager
 - **Email:** amr@iiotsolutions.sa
+- **Telegram:** ID: 1473856272
 - **Role:** Business development + Acting Sales Manager
 - **Note:** Currently covering Sales Manager role until hire
 

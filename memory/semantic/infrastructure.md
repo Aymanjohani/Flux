@@ -1,8 +1,68 @@
 # Infrastructure & Technical Setup
 
-*Last updated: 2026-02-06*
+*Last updated: 2026-02-07*
 
 This file documents the technical infrastructure, integrations, and systems that power IIoT Solutions' operations.
+
+---
+
+## Authorization Hook (RBAC System)
+
+**Purpose:** Role-based access control for team members interacting with Flux
+
+**Built:** 2026-02-07 by Ayman
+**Location:** `hooks/internal/authorization/`
+
+**Architecture:**
+- Advisory enforcement — permissions injected into system prompt on every agent turn
+- Flux sees what each user is allowed to do and acts accordingly
+- Works with Telegram DMs and Gmail hooks
+
+**Roles (3 tiers):**
+| Role | Level | Permissions |
+|------|-------|-------------|
+| Admin | 3 | memory, crm, config, comms, admin |
+| Manager | 2 | memory, crm, comms |
+| User | 1 | memory |
+
+**Feature Groups (5):**
+- `memory` — Search, checkpoint, chapters, semantic memory
+- `crm` — HubSpot, pipeline, deals, contacts
+- `config` — Crons, gateway, settings, system config
+- `comms` — Emails, messages, notifications
+- `admin` — Role/user management, audit logs
+
+**Commands:**
+- `/grant-role <telegram_id> <role> [name]` — Admin only
+- `/revoke-role <telegram_id>` — Admin only
+- `/grant-permission <telegram_id> <permission>` — Admin only
+- `/revoke-permission <telegram_id> <permission>` — Admin only
+- `/list-roles` — Admin only
+- `/my-permissions` — Any user
+- `/request-access` — Unknown users
+
+**Pre-configured Users:**
+| Name | Telegram ID | Role | Extra |
+|------|-------------|------|-------|
+| Ayman AlJohani | 1186936952 | admin | immutable |
+| Aadil Feroze | 124756960 | manager | — |
+| Mreefah AlTukhaim | 1059703822 | user | — |
+| Amr Elmayergy | 1473856272 | user | +crm |
+
+**Files:**
+- `hooks/internal/authorization/index.js` — Main hook entry
+- `hooks/internal/authorization/rbac.js` — RBAC logic
+- `hooks/internal/authorization/commands.js` — Command handlers
+- `config/roles.json` — User role assignments
+- `config/permissions.json` — Role/feature definitions
+
+**Access Request Flow:**
+1. Unknown user messages Flux → gets "unknown user" response with `/request-access`
+2. User runs `/request-access` → creates pending request in `roles.json`
+3. Admin gets notified, runs `/grant-role` to approve
+4. User now has access with assigned role
+
+**Status:** ✅ Active, production ready
 
 ---
 
@@ -367,11 +427,19 @@ Hook → Pre-turn monitoring → Token estimation → Threshold check → System
 
 **Bash wrapper:** `scripts/emit-event.sh` — allows bash scripts to publish events.
 
+**DM capability (F2b — 2026-02-07):**
+- `deliverTelegramDM(chatId, message)` — sends to specific Telegram user via Bot API
+- Reads bot token from `/root/.openclaw/openclaw.json`
+- 2-attempt retry with 2-second delay
+- Used by `personal-briefing.js` for personalized morning DMs
+
 **Scripts using event bus (E5):**
+- `personal-briefing.js` → topic `briefing.personal` (F2b, DM per team member)
 - `morning-briefing.js` → topic `briefing.daily`
 - `pipeline-watchdog.js` → topic `report.pipeline`
 - `accountability-check.js` → topic `report.accountability`
 - `meeting-prep.js` → topic `briefing.meeting.{company}`
+- `onboard-telegram.js` → topic `system.onboarding` (log only)
 
 All scripts have try/catch fallback to direct curl if event-bus fails to load.
 
@@ -401,16 +469,96 @@ All scripts have try/catch fallback to direct curl if event-bus fails to load.
 1. Heartbeat polls (hourly)
 2. ~~Email monitoring (every 2 hours)~~ → Upgrading to Gmail Pub/Sub push (E3)
 3. LinkedIn Intelligence (nightly 2 AM Riyadh = 11 PM UTC)
-4. Morning briefing — `30 5 * * *` (8:30 AM Riyadh)
-5. Meeting prep — `35 5 * * *` (8:35 AM Riyadh)
-6. Pipeline watchdog — `0 3 * * 1` (6:00 AM Riyadh Monday)
-7. Accountability check — `0 15 * * 0` (6:00 PM Riyadh Sunday)
-8. Graph DB re-evaluation — `0 5 13 2 *` (Feb 13 one-time, 8:00 AM Riyadh)
+4. **Personal briefing (F2b)** — `0 5 * * *` (8:00 AM Riyadh) — personalized DMs per team member
+5. Morning briefing — `30 5 * * *` (8:30 AM Riyadh)
+6. Meeting prep — `35 5 * * *` (8:35 AM Riyadh)
+7. Pipeline watchdog — `0 3 * * 1` (6:00 AM Riyadh Monday)
+8. Accountability check — `0 15 * * 0` (6:00 PM Riyadh Sunday)
+9. Graph DB re-evaluation — `0 5 13 2 *` (Feb 13 one-time, 8:00 AM Riyadh)
+10. **Pipeline health watchdog** — `0 */2 * * *` (every 2 hours)
+11. **Session cleanup** — `15 */4 * * *` (every 4 hours, offset from :00)
+12. Telegram onboarding emails — `0 7 8 2 *` (one-time: Sunday Feb 8, 10:00 AM Riyadh)
 
 **Cron management:**
 - System crontab for scheduled scripts
 - Gateway manages webhook/hook jobs
 - Session target: `main` (system events) or `isolated` (agent turns)
+
+**Status:** ✅ Active
+
+---
+
+## RBAC Authorization (2026-02-07)
+
+**Purpose:** Role-based access control for multi-user Flux interactions (Telegram, email sessions).
+
+**Architecture:**
+- 3-tier model: Admin (level 3) → Manager (level 2) → User (level 1)
+- 5 feature groups: memory, crm, config, comms, admin
+- Enforcement: Advisory (injected into system prompt per session, not hard-blocking)
+
+**Files:**
+- `config/permissions.json` — Feature group definitions with keywords
+- `config/roles.json` — User registry with roles and per-user overrides
+- `hooks/internal/authorization/rbac.js` — Core engine: `authorize()`, `authorizeByEmail()`, `grantRole()`, `revokeRole()`
+- `hooks/internal/authorization/commands.js` — 7 slash commands (`/grant-role`, `/revoke-role`, `/grant-permission`, `/revoke-permission`, `/list-roles`, `/my-permissions`, `/request-access`)
+- `hooks/internal/authorization/index.js` — Hook registration, intercepts `agent_turn_start`
+
+**Role permissions:**
+| Role | Permissions |
+|------|-------------|
+| Admin | memory, crm, config, comms, admin |
+| Manager | memory, crm, comms |
+| User | memory |
+
+**Registered users (as of 2026-02-07):**
+| User | Role | Extra |
+|------|------|-------|
+| Ayman | admin (immutable) | — |
+| Aadil | manager | — |
+| Mreefah | user | — |
+| Amr | user | +crm |
+
+**Email authorization:** For Gmail hook sessions (`hook:gmail:*`), looks up user by sender email via `authorizeByEmail()`.
+
+**File locking:** Uses `lockedWriteJSON()` from `memory_engine.js` for safe concurrent writes to `roles.json`.
+
+**Status:** ✅ Active
+
+---
+
+## Pipeline Health Watchdog (2026-02-07)
+
+**Purpose:** Detect when memory pipeline components stop running.
+
+**Location:** `scripts/pipeline-health-watchdog.sh`
+
+**Checks:**
+1. summarize-brief.sh (6-hour cadence)
+2. create-daily-chapter.sh (daily)
+3. today-brief.md staleness (24h threshold)
+4. Vector DB reachability
+5. Cron entries (memory crons exist in crontab)
+
+**Alert:** Telegram notification with 12-hour cooldown per issue.
+
+**Cron:** `0 */2 * * *` (every 2 hours)
+
+**Status:** ✅ Active
+
+---
+
+## Session Cleanup (2026-02-07)
+
+**Purpose:** Prune stale hook/cron sessions, archive old transcripts, report orphans.
+
+**Location:** `scripts/session-cleanup.js`
+
+**Supports:** `--dry-run` flag for safe preview.
+
+**Cron:** `15 */4 * * *` (every 4 hours, offset from :00 jobs)
+
+**Note:** Runs via system crontab, not OpenClaw cron (which would create its own sessions to clean up).
 
 **Status:** ✅ Active
 
@@ -470,7 +618,11 @@ All scripts have try/catch fallback to direct curl if event-bus fails to load.
 | **SSH Alerts** | ✅ Active | Security monitoring | /var/log/ |
 | **GitHub** | ✅ Active | Version control | github.com/Aymanjohani/Flux |
 | **Event Bus** | ✅ Active | Event routing & audit | scripts/event-bus.js |
+| **Personal Briefing** | ✅ Active | Personalized task/deal DMs | scripts/personal-briefing.js |
 | **Email Processor** | ✅ Active | Email security sandbox | scripts/email-processor.js |
+| **RBAC Authorization** | ✅ Active | Role-based access control | hooks/internal/authorization/ |
+| **Pipeline Watchdog** | ✅ Active | Memory pipeline monitoring | scripts/pipeline-health-watchdog.sh |
+| **Session Cleanup** | ✅ Active | Stale session pruning | scripts/session-cleanup.js |
 | **File Locking** | ✅ Active | Concurrent write safety | memory_engine.js |
 | **Gmail Pub/Sub** | ⏳ Pending | Instant email push | scripts/setup-gmail-pubsub.sh |
 

@@ -14,7 +14,10 @@ SUMMARIES_DIR="$MEMORY_DIR/summaries"
 CHAPTERS_DIR="$MEMORY_DIR/context-hierarchy/chapters"
 BOOK_OUTLINE="$MEMORY_DIR/context-hierarchy/book-outline.md"
 LOG_FILE="/root/.openclaw/logs/memory-cron.log"
-GATEWAY_URL="http://127.0.0.1:18789"
+# Load OPENAI_API_KEY from openclaw.json if not set
+if [ -z "${OPENAI_API_KEY:-}" ]; then
+    OPENAI_API_KEY=$(node -e "console.log(require('/root/.openclaw/openclaw.json').env.vars.OPENAI_API_KEY)" 2>/dev/null) || true
+fi
 
 DATE=$(date +"%Y-%m-%d")
 CHAPTER_FILE="$CHAPTERS_DIR/${DATE}.md"
@@ -50,13 +53,19 @@ done
 log "Generating chapter via LLM..."
 
 CHAPTER_CONTENT=""
-LLM_CHAPTER=$(curl -s -X POST "$GATEWAY_URL/api/complete" \
+LLM_CHAPTER=$(curl -s -X POST "https://api.openai.com/v1/chat/completions" \
     -H "Content-Type: application/json" \
+    -H "Authorization: Bearer $OPENAI_API_KEY" \
     -d "$(jq -n --arg content "$COMBINED_CONTENT" '{
-        "prompt": ("Create a cohesive daily chapter from these 6-hour summaries. Include: Day Summary, Key Events (with subheadings), and Infrastructure Notes if relevant. Be concise but comprehensive.\n\n" + $content),
-        "max_tokens": 2000
+        "model": "gpt-4o-mini",
+        "messages": [
+            {"role": "system", "content": "You are creating a daily chapter for a work narrative. Include: Day Summary (2-3 sentences), Key Events (with subheadings), and Infrastructure Notes if relevant. Be concise but comprehensive. Use markdown formatting."},
+            {"role": "user", "content": ("Create a cohesive daily chapter from these 6-hour summaries:\n\n" + $content)}
+        ],
+        "max_tokens": 2000,
+        "temperature": 0.3
     }')" \
-    --max-time 90 2>/dev/null | jq -r '.completion // empty') || true
+    --max-time 90 2>/dev/null | jq -r '.choices[0].message.content // empty') || true
 
 if [ -n "$LLM_CHAPTER" ]; then
     log "LLM chapter generation successful"

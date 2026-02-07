@@ -101,10 +101,35 @@
 - Documentation updated (Gemini → OpenAI across 6+ files)
 - Cron wrapper added for failure visibility
 
-*Full chapter: chapters/2026-02-06.md (pending end-of-day generation)*
+*Full chapter: chapters/2026-02-06.md*
+
+---
+
+## Chapter 7: Pipeline Reconnection (2026-02-07)
+
+**What happened:** Discovered that the entire Tier 1→2→3 memory compression pipeline was disconnected — crons removed, LLM summarization never worked (gateway endpoint broken), token-threshold hook never deployed. Executed comprehensive fix: reinstalled crons, replaced gateway calls with direct OpenAI API, deployed hook, backfilled Feb 6 chapter, archived orphan summaries.
+
+**Key outcomes:**
+- Memory pipeline crons restored (6-hour summarization + daily chapter)
+- LLM summarization now uses OpenAI API directly (gpt-4o-mini) instead of broken gateway
+- Token-threshold monitor hook deployed to hooks/internal/
+- Feb 6 chapter created and vectorized
+- today-brief.md reset for Feb 7
+
+**Continuity:** Automation pipeline fully reconnected. Next scheduled runs: summarize-brief at next 6h mark, daily chapter at 20:55 UTC.
+
+*Full chapter: chapters/2026-02-07.md (pending end-of-day generation)*
 
 ---
 
 *This outline will be updated as new chapters complete. Each entry is a compressed summary designed to give future sessions (or sub-agents) the narrative continuity without re-reading full conversation logs.*
 
-**Last updated:** 2026-02-06
+**Last updated:** 2026-02-07
+
+## Chapter: 2026-02-07
+
+On February 7, 2026, the team successfully prioritized and executed the reconnection of the automation pipeline, enhancing operational efficiency. Key tasks included reinstalling memory pipeline crons...
+
+*Full chapter: chapters/2026-02-07.md*
+
+---

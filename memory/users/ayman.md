@@ -6,7 +6,8 @@
 - **Timezone:** AST (UTC+3) — ALWAYS use Riyadh time in all communications
 - **Telegram ID:** 1186936952
 - **Todoist ID:** 46978654
-- **Last Updated:** 2026-02-06
+- **Known IP:** 51.252.140.81 (primary - don't alert on SSH logins from this)
+- **Last Updated:** 2026-02-07
 
 ## Communication Style
 - **Tone:** Direct, concise, action-oriented — no fluff

@@ -1,5 +1,22 @@
 # Active Work
 
+## ✅ COMPLETED: Authorization Hook (RBAC System) — 2026-02-07
+
+**Built by:** Ayman
+**Location:** `hooks/internal/authorization/`
+
+3-tier role-based access control for team members:
+- **Roles:** Admin > Manager > User
+- **Features:** Memory, CRM, Config, Comms, Admin
+- **Commands:** 7 RBAC management commands
+- **Team configured:** Ayman (admin), Aadil (manager), Mreefah (user), Amr (user+crm)
+
+Advisory enforcement — Flux sees permissions and acts accordingly.
+
+Full docs: `memory/semantic/infrastructure.md` (Authorization Hook section)
+
+---
+
 ## 🔴 URGENT: Resource Sourcing for Balhamar (Feb 18 Deadline)
 
 **Status:** Critical - Hardware ready Feb 18, must have automation engineer secured
@@ -225,11 +242,26 @@
 - ~~Email monitoring (every 2 hours)~~ → **Pending upgrade to Gmail Pub/Sub push (E3)**
 - LinkedIn Intelligence (nightly 2 AM Riyadh)
 - SSH login alerts (monitored)
+- **Personal briefing (daily 8:00 AM Riyadh) — personalized DMs via event-bus (F2b)**
 - Morning briefing (daily 8:30 AM Riyadh) — now via event-bus
 - Meeting prep (daily 8:35 AM Riyadh) — now via event-bus
 - Pipeline watchdog (weekly Monday 6:00 AM Riyadh) — now via event-bus
 - Accountability check (weekly Sunday 6:00 PM Riyadh) — now via event-bus
 - Graph DB re-evaluation reminder (Feb 13, 8:00 AM Riyadh)
+- **Pipeline health watchdog (every 2 hours) — monitors memory pipeline, vector DB, cron health**
+- **Session cleanup (every 4 hours) — prunes stale hook/cron sessions**
+- **Telegram onboarding emails (one-time: Sunday Feb 8, 10:00 AM Riyadh)**
+
+---
+
+## ✅ Completed: RBAC Authorization System (2026-02-07)
+
+- 3-tier model: Admin → Manager → User, 5 feature groups (memory, crm, config, comms, admin)
+- Files: `config/permissions.json`, `config/roles.json`, `hooks/internal/authorization/{rbac,commands,index}.js`
+- 4 users registered: Ayman (admin), Aadil (manager), Mreefah (user), Amr (user + CRM)
+- Email-based auth for Gmail hook sessions
+- Advisory enforcement (injected into system prompt)
+- 7 slash commands for role/permission management
 
 ---
 
@@ -255,7 +287,7 @@
 
 ---
 
-**Last updated:** 2026-02-06, 22:40 UTC (E1-E6 infrastructure hardening complete)
+**Last updated:** 2026-02-07, 23:30 UTC (RBAC + F2b + onboarding + pipeline watchdog + session cleanup)
 
 ---
 
