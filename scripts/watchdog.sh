@@ -1,11 +1,10 @@
 #!/bin/bash
-# OpenClaw Watchdog - Auto-recovery for stuck sessions
-# Runs every 5 minutes via cron to detect and fix hangs
+# OpenClaw Watchdog - Auto-recovery for gateway issues
+# Runs every 5 minutes via cron
 
 LOCK_FILE="/tmp/openclaw-watchdog.lock"
 LOG_FILE="/root/.openclaw/logs/watchdog.log"
-MAX_TYPING_MINUTES=5
-MAX_RUN_MINUTES=4  # Should be less than timeoutSeconds (180s = 3min)
+HEALTH_URL="http://127.0.0.1:18789/"
 
 # Ensure log directory exists
 mkdir -p /root/.openclaw/logs
@@ -26,77 +25,37 @@ fi
 touch "$LOCK_FILE"
 trap "rm -f $LOCK_FILE" EXIT
 
-# Check if gateway is running
-if ! systemctl --user is-active openclaw-gateway.service >/dev/null 2>&1; then
-    log "WARN: Gateway not running, starting..."
-    systemctl --user start openclaw-gateway.service
-    sleep 5
+# Check 1: Is gateway process running?
+if ! pgrep -f "openclaw-gateway" >/dev/null 2>&1; then
+    log "WARN: Gateway process not running, starting..."
+    nohup openclaw gateway start >/dev/null 2>&1 &
+    sleep 10
+    if pgrep -f "openclaw-gateway" >/dev/null 2>&1; then
+        log "OK: Gateway started successfully"
+    else
+        log "ERROR: Failed to start gateway"
+    fi
     exit 0
 fi
 
-# Check recent logs for stuck indicators
-RECENT_LOGS=$(journalctl --user -u openclaw-gateway.service --since "10 minutes ago" --no-pager 2>/dev/null)
-
-# Pattern 1: Typing TTL reached multiple times without response
-TYPING_STOPS=$(echo "$RECENT_LOGS" | grep -c "typing TTL reached")
-RESPONSES=$(echo "$RECENT_LOGS" | grep -c "telegram.*sendMessage\|message sent")
-
-if [ "$TYPING_STOPS" -gt 2 ] && [ "$RESPONSES" -eq 0 ]; then
-    log "ALERT: Detected stuck session - $TYPING_STOPS typing stops, 0 responses"
-
-    # Clear session files that might be corrupted
-    SESSIONS_DIR="/root/.openclaw/agents/main/sessions"
-    if [ -d "$SESSIONS_DIR" ]; then
-        # Find and remove session transcripts older than 1 hour with no recent updates
-        find "$SESSIONS_DIR" -name "*.jsonl" -mmin +60 -delete 2>/dev/null
-        log "Cleaned old session transcripts"
-    fi
-
-    # Restart gateway
-    log "Restarting gateway..."
-    systemctl --user restart openclaw-gateway.service
-    sleep 5
-
-    # Notify via telegram (optional - requires bot token)
-    # curl -s "https://api.telegram.org/bot$BOT_TOKEN/sendMessage" \
-    #     -d "chat_id=$ADMIN_CHAT_ID" \
-    #     -d "text=Watchdog: Detected and recovered from stuck session"
-
-    log "Recovery complete"
-    exit 0
-fi
-
-# Pattern 2: Embedded run timeout in logs
-TIMEOUTS=$(echo "$RECENT_LOGS" | grep -c "embedded run timeout")
-if [ "$TIMEOUTS" -gt 0 ]; then
-    log "WARN: Detected $TIMEOUTS timeout(s) in recent logs"
-
-    # Check if it's still stuck (timeout happened but no recovery)
-    LAST_TIMEOUT=$(echo "$RECENT_LOGS" | grep "embedded run timeout" | tail -1)
-    LAST_ACTIVITY=$(echo "$RECENT_LOGS" | tail -1)
-
-    # If last log entry is still about timeout, we might be stuck
-    if echo "$LAST_ACTIVITY" | grep -q "timeout\|Trying next account"; then
-        log "ALERT: Gateway appears stuck after timeout, restarting..."
-        systemctl --user restart openclaw-gateway.service
-        sleep 5
-        log "Recovery complete"
+# Check 2: Is gateway responding to health checks?
+if ! curl -s -m 10 "$HEALTH_URL" >/dev/null 2>&1; then
+    log "WARN: Gateway not responding to health check, waiting 10s and retrying..."
+    sleep 10
+    
+    if ! curl -s -m 10 "$HEALTH_URL" >/dev/null 2>&1; then
+        log "ALERT: Gateway still not responding, restarting..."
+        openclaw gateway restart
+        sleep 10
+        
+        if curl -s -m 10 "$HEALTH_URL" >/dev/null 2>&1; then
+            log "OK: Gateway recovered after restart"
+        else
+            log "ERROR: Gateway still not responding after restart"
+        fi
+        exit 0
     fi
 fi
 
-# Pattern 3: No logs at all for 10+ minutes (gateway frozen)
-LOG_COUNT=$(echo "$RECENT_LOGS" | wc -l)
-if [ "$LOG_COUNT" -lt 3 ]; then
-    log "WARN: Very few logs in last 10 minutes ($LOG_COUNT lines), checking health..."
-
-    # Try health probe
-    if ! curl -s -m 5 "http://127.0.0.1:18789/" >/dev/null 2>&1; then
-        log "ALERT: Gateway not responding to health check, restarting..."
-        systemctl --user restart openclaw-gateway.service
-        sleep 5
-        log "Recovery complete"
-    fi
-fi
-
-# All good
-log "OK: Watchdog check passed"
+# All checks passed
+log "OK: Gateway healthy (process running, health check passed)"

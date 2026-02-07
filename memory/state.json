@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "updatedAt": "2026-02-02T07:30:00Z",
+  "updatedAt": "2026-02-06T21:30:00Z",
   "facts": {
     "user.name": {
       "value": "Ayman",
@@ -38,7 +38,7 @@
       "source": "setup"
     },
     "integrations.memorySearch": {
-      "value": "enabled (Gemini)",
+      "value": "enabled (OpenAI text-embedding-3-small)",
       "updatedAt": "2026-02-01",
       "source": "config"
     },
@@ -121,6 +121,86 @@
       "value": "18KB team usage guide created (standards, workflows, best practices). Shared with Ayman, Aadil, Mreefah.",
       "updatedAt": "2026-02-03T13:50:00Z",
       "source": "docs/todoist-team-guide.md"
+    },
+    "priorities.cognitive_architecture": {
+      "value": "TOP PRIORITY: Memory optimization, context management, session awareness over feature development",
+      "updatedAt": "2026-02-04T03:32:00Z",
+      "source": "Ayman directive - focus on fundamentals, not features"
+    },
+    "tools.check_before_ask": {
+      "value": "scripts/check-before-ask.sh - searches 6 locations before asking (config, vector, state, env, shell, workspace)",
+      "updatedAt": "2026-02-04T04:30:00Z",
+      "source": "Built by Flux - prevents redundant questions"
+    },
+    "integrations.linkedinIntelV2": {
+      "value": "Native browser orchestration (marker-file cron trigger), 10x faster than subprocess approach",
+      "updatedAt": "2026-02-04T03:00:00Z",
+      "source": "Fixed 300s timeout - ready for deployment"
+    },
+    "tech.memory_engine_cognitive": {
+      "value": "P0-P6 complete: cosine metric fix, hybrid search (vector+keyword), contradiction detection, temporal decay, proactive context assembly, confidence scoring, relationship extraction (BFS graph). memory_engine.js upgraded from 656 to 1230+ lines.",
+      "updatedAt": "2026-02-06T20:30:00Z",
+      "source": "Phase 2 of Feb 6 cognitive architecture upgrade"
+    },
+    "tech.memory_audit": {
+      "value": "Full audit of vector DB, pipeline scripts, cron config, monitoring. Found: 672 chunks in LanceDB, Gemini→OpenAI migration needed, cron pipeline issues. Architecture plan designed (P0-P6 + F1-F8).",
+      "updatedAt": "2026-02-06T19:30:00Z",
+      "source": "Phase 1 of Feb 6 - audit and architecture design"
+    },
+    "tools.session_bootstrap": {
+      "value": "scripts/session-bootstrap.sh — loads context from today-brief, active-work, state.json, book-outline at session start. Output capped at 2000 chars. Degrades gracefully if files missing.",
+      "updatedAt": "2026-02-06T21:00:00Z",
+      "source": "F1 implementation"
+    },
+    "tools.morning_briefing": {
+      "value": "scripts/morning-briefing.js — daily 8:30 AM Riyadh. Gathers Calendar, Todoist, HubSpot stale deals, Gmail, LinkedIn intel. Sends formatted briefing via Telegram. Each source degrades independently.",
+      "updatedAt": "2026-02-06T21:00:00Z",
+      "source": "F2 implementation. Cron: 30 5 * * *"
+    },
+    "tools.pipeline_watchdog": {
+      "value": "scripts/pipeline-watchdog.js — weekly Monday 6:00 AM Riyadh. Queries HubSpot: stale deals, no next step, missing amount, unassigned, lost without post-mortem. Health score 0-100. Saves reports/pipeline-report-{date}.md.",
+      "updatedAt": "2026-02-06T21:00:00Z",
+      "source": "F3 implementation. Cron: 0 3 * * 1"
+    },
+    "tools.lessons_compaction": {
+      "value": "memory compact-lessons [--dry-run] — 3-tier lessons lifecycle. Active (<14d + CRITICAL/RECURRING) stays, older entries archived by theme via LLM, both re-ingested to vector DB. Auto-triggers in dream() when >500 lines.",
+      "updatedAt": "2026-02-06T21:00:00Z",
+      "source": "F4 implementation in memory_engine.js"
+    },
+    "tools.accountability_check": {
+      "value": "scripts/accountability-check.js — Sunday 6:00 PM Riyadh. Analyzes Todoist: no due dates, overdue, per-person compliance scores (due date 60% + priority 40%). Saves reports/accountability-{date}.md.",
+      "updatedAt": "2026-02-06T21:00:00Z",
+      "source": "F5 implementation. Cron: 0 15 * * 0"
+    },
+    "tools.meeting_prep": {
+      "value": "scripts/meeting-prep.js — daily 8:35 AM Riyadh. For external meetings: HubSpot company/deal lookup, previous meeting notes scan, memory context assembly. Sends per-meeting briefing via Telegram.",
+      "updatedAt": "2026-02-06T21:00:00Z",
+      "source": "F6 implementation. Cron: 35 5 * * *"
+    },
+    "tools.user_profiles": {
+      "value": "memory profile <name> — reads memory/users/{name}.md. Ayman (CEO) and Aadil (CTO) profiles populated with comm style, decision patterns, directives, timezone rules. Not auto-populated for other team members yet.",
+      "updatedAt": "2026-02-06T21:00:00Z",
+      "source": "F7 implementation in memory_engine.js"
+    },
+    "tools.event_bus": {
+      "value": "scripts/event-bus.js — publish/subscribe/notify/logEvent. JSONL event log in memory/events/. Topic routing: alert.*→notify, report.*→notify+save, email.*→classify+route, memory.*→log, system.*→log. Retry once on failure, failed events logged separately. Bash wrapper: scripts/emit-event.sh.",
+      "updatedAt": "2026-02-06T23:00:00Z",
+      "source": "E1 implementation"
+    },
+    "tools.email_processor": {
+      "value": "scripts/email-processor.js — sanitization, injection pattern scanning, LLM classification (sandboxed prompt), event bus routing. Auto-reply ONLY to @iiotsolutions.sa (hardcoded allowlist). Raw body never leaves processor.",
+      "updatedAt": "2026-02-06T23:00:00Z",
+      "source": "E4 implementation"
+    },
+    "tech.file_locking": {
+      "value": "lockedWriteJSON() in memory_engine.js — mkdir-based atomic locking compatible with bash file-lock.sh. Same /tmp/openclaw-locks/ directory, 30s timeout, 5min stale detection. All state.json writes now locked.",
+      "updatedAt": "2026-02-06T23:00:00Z",
+      "source": "E2 implementation"
+    },
+    "tech.event_architecture": {
+      "value": "4 scripts (morning-briefing, pipeline-watchdog, accountability-check, meeting-prep) migrated from direct curl to event-bus.js. Backward compatible — falls back to curl if event-bus fails to load.",
+      "updatedAt": "2026-02-06T23:00:00Z",
+      "source": "E5 implementation"
     }
   },
   "invalidated": [
@@ -143,12 +223,13 @@
     }
   },
   "pendingItems": [
-    "Fix memory_engine.js Gemini→Claude fallback (dream cron failed on quota)",
-    "Debug LinkedIn Intelligence script timeout (SIGKILL at 300s)",
     "Clean up 3 test bots from Recall.ai",
     "Production voice bot setup (prototype proven, needs stable hosting)",
     "Todoist restructure - waiting for Aadil feedback on clean slate approach (sent 2026-02-03)",
-    "Schedule 30-min planning session with Aadil for Todoist adoption plan"
+    "Schedule 30-min planning session with Aadil for Todoist adoption plan",
+    "Auto-populate remaining team member profiles (Hamad, Amr, Mreefah, etc.)",
+    "E3: Run gcloud auth login + scripts/setup-gmail-pubsub.sh to activate Gmail Pub/Sub push notifications",
+    "Feb 13 (Friday): Re-evaluate whether graph database (Neo4j) is needed — check entity count in relationships.json, query complexity, traversal depth requirements. Report findings via Telegram."
   ],
   "completedItems": [
     {
@@ -220,6 +301,46 @@
       "item": "Todoist Restructure Proposal",
       "completedAt": "2026-02-03T13:50:00Z",
       "outcome": "15KB clean slate architecture proposal by function. Sent to Aadil for review and decision."
+    },
+    {
+      "item": "LinkedIn Intelligence V2 (Native Browser Orchestration)",
+      "completedAt": "2026-02-04T03:00:00Z",
+      "outcome": "Fixed 300s timeout by eliminating subprocess overhead. Built marker-file system for cron → native browser tool. 10x performance improvement (8-12 min vs 300s+). Ready to deploy."
+    },
+    {
+      "item": "Check Before Ask Automation",
+      "completedAt": "2026-02-04T04:30:00Z",
+      "outcome": "Built scripts/check-before-ask.sh - searches 6 locations (config, vector memory, state files, env vars) before asking user. Prevents redundant questions."
+    },
+    {
+      "item": "MEMORY.md Long-Term Repository",
+      "completedAt": "2026-02-04T20:30:00Z",
+      "outcome": "Created persistent knowledge file: core principles, technical patterns, business context, anti-patterns. Evolves as I learn."
+    },
+    {
+      "item": "Team Meeting Transcription (Feb 4)",
+      "completedAt": "2026-02-04T08:16:00Z",
+      "outcome": "70-minute meeting with Ayman/Adil/Hamad recorded via Recall.ai, transcribed via Whisper, summarized and sent. Key decisions captured."
+    },
+    {
+      "item": "Memory System Audit & Architecture Plan",
+      "completedAt": "2026-02-06T19:30:00Z",
+      "outcome": "Full audit: 672 vector chunks, pipeline scripts, cron config, monitoring infra. Designed P0-P6 + F1-F8 architecture plan. Created scripts/memory CLI wrapper."
+    },
+    {
+      "item": "P0-P6 Cognitive Architecture Upgrade",
+      "completedAt": "2026-02-06T20:30:00Z",
+      "outcome": "7 features: P0 cosine metric fix (search went from 0-1 to 5 results), P1 hybrid search (vector+keyword fallback), P2 contradiction detection, P3 temporal decay weighting, P4 proactive context assembly (getContextFor), P5 confidence scoring, P6 relationship extraction (BFS graph). memory_engine.js: 656→1032 lines."
+    },
+    {
+      "item": "F1-F8 Operational Intelligence Upgrade",
+      "completedAt": "2026-02-06T21:15:00Z",
+      "outcome": "8 features: F1 session-bootstrap.sh (2000 char context loader), F2 morning-briefing.js (daily 8:30 Riyadh), F3 pipeline-watchdog.js (weekly Monday), F4 lessons compaction (3-tier lifecycle with LLM dedup), F5 accountability-check.js (Sunday), F6 meeting-prep.js (daily 8:35), F7 user profiles (ayman.md + aadil.md populated, getUserProfile()), F8 crontab (4 new jobs). memory_engine.js: 1032→1230+ lines."
+    },
+    {
+      "item": "E1-E6 Infrastructure Hardening & Event Architecture",
+      "completedAt": "2026-02-06T23:00:00Z",
+      "outcome": "E1: event-bus.js (publish/subscribe/notify/logEvent + JSONL event log + topic routing + retry). E2: lockedWriteJSON() in memory_engine.js (mkdir-based atomic locking, compatible with file-lock.sh). E3: Gmail Pub/Sub config in openclaw.json + setup-gmail-pubsub.sh (needs gcloud auth). E4: email-processor.js (sanitization, injection detection, LLM classification, domain-allowlisted auto-reply). E5: 4 scripts migrated to event-bus (morning-briefing, pipeline-watchdog, accountability-check, meeting-prep). E6: Graph DB re-evaluation reminder set for Feb 13."
     }
   ],
   "pendingForwards": []

@@ -1,18 +1,20 @@
 #!/bin/bash
 # Flux-Lite Memory System CLI Wrapper
-# Automatically loads GEMINI_API_KEY from OpenClaw config
+# Loads OPENAI_API_KEY from OpenClaw config for embeddings
 
 set -e
 
-# Extract Gemini API key from OpenClaw config
-GEMINI_API_KEY=$(cat ~/.openclaw/openclaw.json | grep -A 1 '"memorySearch"' -A 10 | grep '"apiKey"' | cut -d'"' -f4)
+# Extract OpenAI API key from OpenClaw config
+if [ -z "$OPENAI_API_KEY" ]; then
+    OPENAI_API_KEY=$(node -e "try{const c=require('/root/.openclaw/openclaw.json');console.log(c.env.vars.OPENAI_API_KEY||'')}catch(e){}" 2>/dev/null)
+fi
 
-if [ -z "$GEMINI_API_KEY" ]; then
-    echo "❌ Error: GEMINI_API_KEY not found in OpenClaw config"
+if [ -z "$OPENAI_API_KEY" ]; then
+    echo "❌ Error: OPENAI_API_KEY not found in env or OpenClaw config"
     exit 1
 fi
 
-export GEMINI_API_KEY
+export OPENAI_API_KEY
 
 # Get the directory where this script is located
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"

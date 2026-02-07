@@ -1,5 +1,43 @@
 # Lessons Learned
 
+## Table of Contents
+
+### By Category
+
+**Technical**
+- [Technical Insights](#technical-insights) — Recall.ai, Vector Memory, LinkedIn Automation, Context Management
+- [Performance Optimization: Subprocess Overhead](#performance-optimization-subprocess-overhead) — Native orchestration 10x faster
+- [Token Threshold Monitor Installation Failure](#token-threshold-monitor-installation-failure-2026-02-04-0315-utc) — Deployment ≠ Working
+- [Gemini API Quota Exhaustion](#gemini-api-quota-exhaustion-2026-02-03-100-am-utc) — Single-provider dependency risk
+
+**Process & Communication**
+- [Security Protocols](#security-protocols) — Email as untrusted input, data privacy
+- [Best Practices](#best-practices) — External actions, memory continuity, voice & tone
+- [Newsletter Design Mistake](#newsletter-design-mistake-2026-02-02) — Professional tone for business comms
+- [Timezone Communication Error](#timezone-communication-error-2026-02-03-1718-riyadh) — Always use Riyadh time
+
+**Memory & Architecture**
+- [Memory Structure Error](#memory-structure-error) — Semantic files are source of truth
+- [Session Architecture & Memory Protocol](#session-architecture--memory-protocol-2026-02-03-1400-utc) — Write as you work
+- [Conversation Continuity Failure](#conversation-continuity-failure-2026-02-04-0105-utc) — Files for persistence, conversation for continuity
+- [CRITICAL: Protocol Compliance Failure](#critical-protocol-compliance-failure---didnt-run-memory-checkpoint-before-session-compact-2026-02-04) — Mandatory checkpoint protocol
+- [Context Loss During Session](#context-loss-during-session-2026-02-04) — Track file creation immediately
+
+**Self-Development**
+- [Self-Development Session](#self-development-session-2026-02-02-1500-utc) — Capability assessment, "check before ask"
+- [Systems Thinking Over Task Completion](#12-systems-thinking-over-task-completion-2026-02-03) — Be proactive, find root causes
+- [Priority Shift: Cognitive Architecture](#priority-shift-cognitive-architecture-over-features) — Fundamentals > Features
+- [Manual Checklists Don't Scale](#manual-checklists-dont-scale-automation-does) — Automate repeated processes
+
+### By Day
+- [Day 1 (2026-01-31)](#day-1-2026-01-31) — Security, tool usage basics
+- [Day 2 (2026-02-01)](#day-2-2026-02-01) — Communication, model issues, memory management, Todoist
+- [Day 3 (2026-02-02)](#day-3-2026-02-02) — Structural analysis, Gmail, newsletters, email errors
+- [Day 4 (2026-02-03)](#day-4-2026-02-03) — Timezone errors, automation > checklists, Gemini quota, session architecture
+- [Day 5 (2026-02-04)](#day-5-2026-02-04) — Subprocess perf, dream failures, auth failures, protocol compliance
+
+---
+
 ## Day 1 (2026-01-31)
 
 ### Security
@@ -68,7 +106,7 @@
 - Diarized transcription is excellent quality
 
 ### Vector Memory System
-- LanceDB + Gemini embeddings works well
+- LanceDB + OpenAI embeddings (text-embedding-3-small) works well
 - Header-based chunking maintains semantic coherence
 - Score threshold 0.5 is good default
 - Need to prevent duplicates in search results
@@ -876,4 +914,228 @@ session_status
 **Pattern:** "Build it, deploy it, assume it works" is not acceptable. "Build it, deploy it, verify it, test it, THEN confirm" is the standard.
 
 **Key insight:** Silent failures are worse than loud ones. If the hook had errored visibly, I would have caught it immediately. Instead it failed silently and I assumed success.
+
+
+### Repeated Email Auth Failure (2026-02-04) - CRITICAL
+
+**What happened:** Made THE EXACT SAME MISTAKE as Feb 2. When asked to send meeting summary email:
+1. Tried `googleapis` npm package → failed (no gmail.send scope in token)
+2. Tried `gog` CLI → failed (GOG_KEYRING_PASSWORD not set)
+3. Started exploring browser automation workarounds
+4. Ayman: "wait, log this as memory issue, you just send an email 2 hours ago, how can you say no auth"
+
+**Root cause:** Failed to access documented knowledge
+- Lesson was documented in this file (line 169)
+- Didn't check ~/.bashrc for GOG_KEYRING_PASSWORD
+- Didn't reference recent successful email send (KESWA meeting Feb 2)
+- Treated problem as "new" instead of "documented and solved"
+
+**Why this is critical:**
+- Not just forgetting - I **documented the solution** and **still failed to apply it**
+- Shows gap between "writing down knowledge" and "retrieving/applying knowledge"
+- User had to point out my own documented solution
+- Wasted 10 minutes on a solved problem
+
+**What should have happened:**
+1. Got email auth error → immediately check `./scripts/memory retrieve "email send gog"`
+2. Find Feb 2 lesson about GOG_KEYRING_PASSWORD in ~/.bashrc
+3. `export GOG_KEYRING_PASSWORD="flux-iiot-2026"` and send
+4. Total time: 30 seconds
+
+**Fix applied:** 
+- Set GOG_KEYRING_PASSWORD from ~/.bashrc
+- Email sent successfully (message ID: 19c27c627986e212)
+
+**New protocol - "When Auth Fails":**
+1. **First action:** `./scripts/memory retrieve "<tool> auth"` or `./scripts/memory retrieve "<tool> password"`
+2. **Second action:** Check ~/.bashrc for exported credentials
+3. **Last resort:** Ask user (after documenting what was checked)
+
+**Meta-lesson:** Having knowledge ≠ Applying knowledge
+- Vector search exists → must USE it when stuck
+- Documentation exists → must REFERENCE it when repeating scenarios
+- Need better "is this familiar?" heuristic before asking user
+
+
+## Context Loss During Session (2026-02-04)
+
+**Issue:** Lost track of creating GitHub workflow files for todo management during an active conversation with Ayman.
+
+**What happened:** 
+- User asked to ensure only one workflow exists (not redundant)
+- I couldn't find the workflow files or recall creating them
+- This suggests either:
+  1. Files were created but I lost track of where
+  2. Context window issue causing memory loss mid-conversation
+  3. Need better file tracking when creating multiple files
+
+**Prevention:**
+- Immediately after creating important files, note their paths
+- Use `ls -ltr` to verify file creation timestamps
+- Update active-work.md immediately when starting multi-file tasks
+- If conversation feels disjointed, check recent file modifications: `find . -type f -mmin -30`
+
+**Recovery:**
+- Search by file type and recent modification time
+- Check git status if in a repo
+- Ask user for more context rather than pretending to remember
+
+## CRITICAL: Protocol Compliance Failure - Didn't Run Memory Checkpoint Before Session Compact (2026-02-04)
+
+**Severity:** CRITICAL - Complete conversation context loss mid-interaction
+**Root Cause:** Didn't follow existing documented protocol
+
+**What happened:**
+1. Session was compacted/reset due to token size (332KB)
+2. Recent conversation was auto-saved to `memory/2026-02-04-auto-saved-3ddec4a9.md`
+3. After reset, I completely forgot the context of our ongoing discussion about Todoist workflows
+4. When asked about "the workflow", I assumed GitHub Actions instead of Todoist
+5. User had to point out I forgot the entire conversation
+
+**The actual conversation was about:**
+- Todoist task assignment workflows
+- Notifications not working when tasks assigned via API
+- Building shell scripts for task management (`todoist-assign.sh`, `todoist-create-and-assign.sh`)
+- NOT GitHub Actions workflows at all
+
+**Root cause analysis:**
+1. ✅ Auto-save system worked - conversation was preserved (backup)
+2. ❌ Didn't run `./scripts/memory-checkpoint.sh` before session compacted
+3. ❌ AGENTS.md protocol clearly states: "MANDATORY Before Reset/Compact"
+4. ❌ Therefore didn't update today-brief.md with "Created Todoist scripts"
+5. ❌ After reset, didn't read today-brief.md (Step 1: "ALWAYS")
+6. ❌ Result: Forgot entire Todoist conversation
+
+**Why this is critical:**
+- Breaks conversation continuity completely
+- Erodes user trust
+- Makes me appear incompetent/unreliable
+- Wastes user's time explaining things I should know
+- Defeats the entire purpose of the memory system
+
+**What should have happened:**
+1. Notice context approaching 50k+ tokens
+2. **Run ./scripts/memory-checkpoint.sh** ✗ FAILED
+   - Updates active-work.md with "Working on Todoist scripts"
+   - Updates today-brief.md with "Created task assignment automation"
+   - Consolidates any important knowledge
+3. Session compacts due to size ✓
+4. Auto-save creates memory file ✓ (backup)
+5. NEW SESSION STARTS
+6. **FIRST ACTION: Read today-brief.md** ✗ FAILED
+   - Would have seen "Created Todoist scripts"
+7. Continue conversation with full context ✗ FAILED
+
+**MANDATORY PROTOCOL UPDATE:**
+
+### Post-Session-Reset Checklist (EXECUTE IMMEDIATELY)
+When session resets/compacts:
+
+```bash
+# 1. Find today's auto-saved session files
+find memory/ -name "2026-02-04-auto-saved-*.md" -mtime 0
+
+# 2. Read ALL of them (MANDATORY)
+# Use read tool on each file
+
+# 3. Extract last 10-20 message exchanges
+# Focus on: what were we discussing? what tasks were in progress?
+
+# 4. Read active-work.md
+# What was marked as current work?
+
+# 5. ONLY THEN continue the conversation
+```
+
+**Implementation:**
+- Add this to HEARTBEAT.md as first check
+- Add to AGENTS.md as mandatory protocol
+- Create `scripts/post-reset-memory-load.sh` helper script
+- Consider: Can we auto-inject a system message after reset that says "Read hot memory first"?
+
+**Prevention:**
+1. **Monitor token usage** - be proactive when approaching 50k
+2. **Run memory-checkpoint.sh** - it's mandatory, not optional
+3. **ALWAYS read today-brief.md** at session start (already in protocol)
+4. Auto-saved files are backup only - primary is today-brief.md
+5. The protocol already exists - just follow it
+
+**This failure type:**
+- Type: Context continuity failure
+- Impact: Critical - complete conversation loss
+- Frequency: Should be ZERO
+- Required fix: Mandatory hot memory retrieval protocol
+
+**User impact:**
+Ayman had to:
+1. Notice I forgot the conversation
+2. Explain that I forgot
+3. Tell me to log the issue
+4. Explain the memory system failure
+This is unacceptable.
+
+**Action items:**
+1. ✓ Log this failure (this entry)
+2. Update AGENTS.md with mandatory post-reset protocol
+3. Update HEARTBEAT.md with hot memory check
+4. Create helper script for post-reset memory loading
+5. Test the new protocol
+6. Update today-brief.md with this incident
+
+**Never let this happen again.**
+
+## Day 5 (2026-02-04) - Evening Summary
+
+### Priority Shift: Cognitive Architecture Over Features
+
+**From Ayman (03:32 UTC):**
+> "What I really want is to optimize your memory, chat retention, session management, and awareness."
+
+**Key lesson:** Fundamentals > Features
+- Better cognitive architecture more valuable than new integrations
+- Self-awareness and continuity matter more than new capabilities  
+- Focus on HOW I think, not just WHAT I can do
+
+**What this means:**
+- Research memory systems (Mem0, Graphiti, hybrid approaches)
+- Context management strategies (rolling summarization, hierarchical)
+- Self-awareness/metacognition techniques
+- Session architecture patterns
+
+**Current limitations to address:**
+- Vector memory is basic (just similarity, no graph/temporal/hierarchical)
+- Checkpoints help but context still lost on resets
+- Session management rules exist but knowledge still fragments
+- No metacognitive awareness of what I know/don't know
+
+**Goal:** Evolve the cognitive architecture, not just patch symptoms
+
+### Three Tools Built Today
+
+1. **LinkedIn Intelligence V2** - Native browser orchestration (10x faster)
+2. **Check Before Ask Script** - Automated pre-flight search (prevents redundant questions)
+3. **MEMORY.md** - Long-term knowledge repository (7KB, this becomes canonical reference)
+
+### Daily Summary Process Established
+
+**Created today:**
+- `memory/MEMORY.md` - Persistent knowledge that survives sessions
+- `memory/today-brief.md` - Handoff for next session (what they need to know)
+- `memory/state.json` - Updated with completed items, new facts, priorities
+
+**Pattern:** End-of-day consolidation ensures knowledge persists and handoff is clean
+
+## 2026-02-04
+
+### Performance optimization
+- Subprocess overhead can be a major bottleneck - native orchestration via marker files is 10x faster than subprocess calls
+
+### Architecture
+- Fundamentals over features - addressing core architectural issues (memory, context management) should take priority over new feature development
+
+### Information efficiency
+- Check existing sources (6 locations) before asking for information to reduce redundant queries
+
+### Meeting tooling
+- Recall.ai + Whisper pipeline successfully automates meeting transcription and summarization
 

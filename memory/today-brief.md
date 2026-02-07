@@ -1,282 +1,111 @@
-# Today Brief — 2026-02-04
+# Today Brief — 2026-02-06 (Friday)
 
-**Day 5** — Wednesday
+## ✅ Completed: Weekly Self-Review
 
-## ✅ RESOLVED: Token Threshold Monitor (04:50 UTC)
+**Time:** 03:37-04:00 UTC (6:37-7:00 AM Riyadh)
 
-**Previous issue (03:15):** Thought hook wasn't loading - no warnings seen at 69k tokens
+**Deliverables:**
+- Weekly review written: `memory/weekly-reviews/2026-02-07.md` (7KB)
+- Capabilities updated: `memory/capabilities.md`
+- Goals updated: `memory/goals.md`
+- Summary sent to Ayman via Telegram (message ID: 2764)
 
-**Resolution:** Hook WAS working, verified from logs at `/root/.openclaw/logs/token-monitor.log`:
-```
-[04:46:59] Session telegram:dm: ~55639 tokens (27.8%) - WARNING threshold crossed
-[04:49:17] Session telegram:dm: ~64796 tokens (32.4%) - WARNING threshold crossed
-[04:50:35] Session telegram:dm: ~1577 tokens (0.8%) - Reset after compaction
-```
+**Key Findings:**
+- Technical capability: ⭐⭐⭐⭐ Strong
+- Operational discipline: ⭐⭐ Weak
+- Core issue: Build good systems but don't use them consistently
 
-**What happened:** Different sessions (main vs telegram DM) - warnings were firing on correct session
-
-**Lesson:** Check ALL sessions' logs before assuming failure
-
----
-
-## ✅ COMPLETED: Memory Architecture + Workspace Cleanup (01:00-01:42 UTC)
-
-**1. Memory Architecture Testing (01:00-01:17)**
-- ✅ Memory checkpoint complete (all context preserved)
-- ✅ Found and fixed conversation continuity bug
-- ✅ Updated protocols.md with "Active Session Continuity" section
-- ✅ Architecture tested and working correctly
-
-**2. Codebase Audit (01:31-01:37)**
-- ✅ Spawned sub-agent for comprehensive workspace evaluation
-- ✅ Identified 28+ files cluttering root, 6 empty skills, technical debt
-
-**3. Workspace Cleanup (01:41-01:42)**
-- ✅ Phase 1: Organized root (data→archive, scripts→ops/hubspot, demo→projects)
-- ✅ Phase 2: Deleted 6 empty skills, kept 5 active
-- ✅ Phase 3: Fixed memory_engine.js fallback, created missing dirs, added bash alias
-
-**Current state:** Clean workspace, hardened memory system, production-ready
+**Priority this week:**
+1. Make memory retrieval reflexive
+2. Verify before claiming "done"
+3. Follow checkpoint protocol
+4. Start cognitive architecture research
 
 ---
 
-## ✅ COMPLETED: GitHub Integration (05:40-05:46 UTC)
+## ✅ RESOLVED: Embedding Model Fixed
 
-**Setup completed:**
-- SSH key generated (ed25519) and added to GitHub as deploy key
-- Repository: https://github.com/Aymanjohani/Flux.git
-- Initial commit: 76 files, 29,413 insertions
-- Security: Sensitive files excluded via .gitignore (config/, API keys, OAuth tokens)
-- Commit identity: Flux <coding@iiotsolutions.sa>
-- Auto-commit workflow: Changes pushed automatically as I work
-
-**What's tracked:**
-- All documentation (AGENTS.md, SOUL.md, IDENTITY.md, memory files)
-- Skills and scripts
-- HubSpot implementation docs
-- Research and meeting notes
-
-**What's excluded:**
-- config/ directory (OAuth tokens, API keys)
-- Python scripts with hardcoded keys
-- Memory files containing sensitive data
+**Discovered:** During weekly review (04:00 UTC)
+**Error:** `text-embedding-004 is not found for API version v1beta`
+**Fix (P0):** Migrated to OpenAI text-embedding-3-small (1536 dims). All ingestion working.
+**Verified:** ayman.md (8 chunks), aadil.md (7 chunks) ingested successfully.
 
 ---
 
-## Top Priority: Todoist Reform
-**Status:** Awaiting Aadil's feedback on restructure proposal (sent 2026-02-03)
+## 🔴 CRITICAL: Balhamar Resource Sourcing (Feb 18 Deadline)
 
-**What's pending:**
-- Clean slate vs fix-in-place decision
-- Approval of functional architecture (6 areas)
-- Schedule 30-min planning session
-- Execution timeline
-
-**If approved:** Execute migration immediately (2-3 hours work)
-
-## Recent Context (Yesterday, 2026-02-03)
-
-**Major work:** Project portfolio analysis revealed systemic organizational issues
-- **HubSpot:** 26 deals analyzed (SAR 1.94M active pipeline, 23% stale rate)
-- **Todoist:** 51 tasks, 38 projects analyzed (96% tasks have no due dates)
-
-**Root finding:** Tools exist (HubSpot, Todoist), but no operational discipline
-
-**Solutions created:**
-- `docs/todoist-team-guide.md` (18KB) - shared with Ayman, Aadil, Mreefah
-- `docs/todoist-restructure-proposal.md` (15KB) - sent to Aadil for decision
-
-## Active Integrations ✅
-- Gmail (coding@iiotsolutions.sa, read+send) + Calendar
-- HubSpot CRM (full access, Portal 147149295)
-- Todoist (Ayman's account, API access)
-- LinkedIn Intelligence (nightly 2 AM Riyadh)
-- Recall.ai (meeting bots, EU region)
-- Vector Memory (298 chunks after latest ingest)
-
-## System State
-
-**Recent fixes (2026-02-04):**
-- ✅ LinkedIn Intelligence timeout - Rebuilt with native browser orchestration (10x faster)
-
-**Pending fixes:**
-- Fix memory_engine.js Gemini→Claude fallback (dream cron failed on quota)
-- Clean up 3 test bots from Recall.ai
-- Production voice bot setup (when needed)
-
-**HubSpot follow-up needed:**
-- 6 stale SIRI deals (>7 days no activity) - need status update
-- Create loss analysis template (SAR 1.24M closed lost, no post-mortems)
-- Weekly pipeline review process (Mondays 9 AM)
-
-## Key Protocols
-
-### Memory Management
-**Before any session reset/compact:** Run `./scripts/memory-checkpoint.sh`
-
-**Write as we work (not just at session end):**
-- Task started/progressed → update active-work.md
-- Configuration/build → update infrastructure.md + re-ingest
-- Learning → update semantic file + re-ingest
-- Mistake/pattern → update lessons-learned.md + re-ingest
-- Team/business info → update team.md or company.md + re-ingest
-
-**Rule:** If conversation disappeared right now, could another session continue? If no → write to memory now.
-
-### Session Architecture
-**Use sessions for:** Different people/channels, scheduled work, truly long-running parallel work (hours)
-**Don't use for:** Organizing work, research, multi-step workflows, "background" work <30min
-
-**Integration layer:** Memory files (all sessions share)
-
-### Systems Thinking (New lesson from yesterday)
-**Be proactive:**
-- Don't just answer questions → identify systemic issues
-- Connect dots across tools
-- Propose solutions before being asked
-- Create documentation that scales
-
-**Pattern:** User asks for analysis → I find deeper issues → Create comprehensive solutions → This is what an AI employee should do
-
-## Quick Reference
-- **Daily log:** Create `memory/2026-02-04.md` today
-- **Vector search:** `./scripts/memory retrieve "query"`
-- **Team emails:** `memory/semantic/team.md`
-- **Yesterday's work:** `memory/2026-02-03.md`
-- **Yesterday's summary:** `memory/daily-summary-2026-02-03.md`
-
-## About IIoT Solutions (Remember)
-- **Strong technical capability:** Engineers skilled, integrations work
-- **Weak operational discipline:** No task hygiene, deals drift, can't learn from losses
-- **Need structure more than features:** Tools exist, need standards + accountability
-
-## Team Dynamics
-- Ayman appreciates directness and systems thinking
-- Aadil implements technical/process changes
-- Mreefah handles admin tasks effectively
-- Team needs accountability structures, not more tools
+Still active from previous days. Hardware ready Feb 18, must have automation engineer secured.
 
 ---
 
-**Today's focus:** Follow up on Todoist restructure decision, maintain momentum on HubSpot pipeline hygiene
+## ✅ Completed: Memory System Audit & Architecture Plan (~19:30 UTC)
+
+- Full audit of vector DB (672 chunks), pipeline scripts, cron config, monitoring infra
+- Identified Gemini→OpenAI migration issues, cron pipeline failures
+- Designed comprehensive P0-P6 + F1-F8 architecture plan
+- Created `scripts/memory` CLI wrapper
 
 ---
 
-## ✅ COMPLETED: Full System Audit & Fixes (04:30-05:00 UTC)
+## ✅ Completed: P0-P6 Cognitive Architecture Upgrade (~20:30 UTC)
 
-**Scope:** Complete audit of memory, hooks, skills, cron jobs, scripts, integrations
-
-### Issues Found & Fixed
-
-| Issue | Status | Fix |
-|-------|--------|-----|
-| Vector DB 73% duplicates (1375 chunks, 380 unique) | ✅ Fixed | Added dedup to `ingest()` - deletes old chunks before adding new |
-| Dream Claude fallback broken | ✅ Fixed | Changed to `claude -p --model sonnet` + OpenAI gateway fallback |
-| Duplicate token-threshold-monitor hook | ✅ Fixed | Removed workspace copy, kept bundled version |
-| self-development skill missing (cron refs it) | ✅ Fixed | Created `skills/self-development/SKILL.md` |
-| lessons-learned.md not updated by dream() | ✅ Fixed | dream() now appends learnings + re-ingests |
-
-### Verified Working
-
-- Token threshold hook ✅ (logs show 55k/64k warnings detected)
-- Memory engine (ingest/retrieve/delete/dream) ✅
-- All 6 cron jobs (memory-related) ✅
-- Path consistency (absolute paths throughout) ✅
-- 6 skills documented (including new self-development) ✅
-- 9 cron jobs valid ✅
-- All integrations active ✅
-
-### Memory Architecture Complete
-
-```
-Sessions → today-brief.md → summaries (6hr) → chapters (daily)
-                                    ↓
-                         summary vectors deleted (dedup)
-
-dream() (4am) → extracts learnings → lessons-learned.md (appended)
-```
-
-### Key Files Updated
-
-- `scripts/memory_engine.js` - dedup in ingest(), Claude+OpenAI in callLLM(), lessons-learned update in dream()
-- `skills/self-development/SKILL.md` - New skill for daily learning consolidation
-- `memory/semantic/memory-architecture.md` - v2.1 with dedup strategy
-
-### Vector DB Status
-
-- Before cleanup: 1,375 chunks (73% duplicates)
-- After test re-ingest: 1,354 chunks (dedup working)
-- Future ingests will auto-deduplicate
+7 features implemented in `memory_engine.js` (656→1032 lines):
+- **P0:** Cosine metric fix (search results went from 0-1 to 5)
+- **P1:** Hybrid search — vector + keyword fallback via `grepSemanticFiles()`
+- **P2:** Contradiction detection — `detectContradictions()` in dream()
+- **P3:** Temporal decay — exponential freshness weighting
+- **P4:** Proactive context assembly — `getContextFor()` + CLI `context` command
+- **P5:** Confidence scoring — flows through entire pipeline
+- **P6:** Relationship extraction — `extractRelationships()` + BFS `getRelated()`
 
 ---
 
-## ✅ COMPLETED: Old Chunks Preservation Fix (05:15 UTC)
+## ✅ Completed: F1-F8 Operational Intelligence Upgrade (~21:15 UTC)
 
-**Issue:** Dedup would delete old lessons-learned.md chunks (672 historical entries) when dream() re-ingests
+8 features (memory_engine.js now 1230+ lines + 5 new scripts):
+- **F1:** `scripts/session-bootstrap.sh` — context loader, 2000 char cap
+- **F2:** `scripts/morning-briefing.js` — daily 8:30 AM Riyadh (Calendar, Todoist, HubSpot, Gmail, LinkedIn)
+- **F3:** `scripts/pipeline-watchdog.js` — weekly Monday 6:00 AM Riyadh (deal health, stale detection)
+- **F4:** `compactLessons()` — 3-tier lessons lifecycle, LLM dedup, auto-triggers at >500 lines
+- **F5:** `scripts/accountability-check.js` — Sunday 6:00 PM Riyadh (Todoist compliance scores)
+- **F6:** `scripts/meeting-prep.js` — daily 8:35 AM Riyadh (HubSpot company/deal lookup, memory context)
+- **F7:** User profiles populated (ayman.md, aadil.md) + `getUserProfile()` + CLI `profile` command
+- **F8:** 4 new cron jobs installed
 
-**Solution:** Added `sourceTag` option to ingest():
-- `ingest(filePath)` → normal behavior, uses filePath as source
-- `ingest(filePath, { sourceTag: 'custom' })` → reads file, stores with custom source
-
-**Implementation:**
-- dream() now uses: `ingest(lessonsFileRel, { sourceTag: lessonsFileRel + '@v2' })`
-- Old chunks at `memory/semantic/lessons-learned.md` → **PRESERVED**
-- New chunks at `memory/semantic/lessons-learned.md@v2` → separate namespace
-- Both searchable, dedup only affects matching source
-
----
-
-## ✅ COMPLETED: Cognitive Enhancement Backlog (05:20 UTC)
-
-Added research-backed improvement roadmap to `skills/self-development/SKILL.md`:
-
-### Phase 1: Now (Low Effort, High Impact)
-- Failure post-mortems - structured analysis when things fail
-- Uncertainty tracking - confidence levels on facts
-
-### Phase 2: Soon (Medium Effort)
-- Reasoning chain memory - store HOW conclusions reached
-- Temporal decay + reinforcement - weight by recency/access
-- Capability metrics dashboard - quantitative self-assessment
-
-### Phase 3: Later (High Effort, Very High Impact)
-- Multi-hop retrieval - follow connections between chunks
-- Predictive context loading - anticipate needed context
-- Skill transfer detection - apply learnings across domains
-
-### Phase 4: Future (Research)
-- User mental models
-- Proactive memory maintenance
-- Contradiction detection
-
-**Research basis:** Mem0, cognitive psychology, knowledge graphs, predictive processing
-
-**Tracking:** Implementation table added to skill for progress monitoring
+**New cron schedule:**
+- `30 5 * * *` — morning-briefing.js
+- `35 5 * * *` — meeting-prep.js
+- `0 3 * * 1` — pipeline-watchdog.js
+- `0 15 * * 0` — accountability-check.js
 
 ---
 
-## System State Summary (End of Session)
+## Pending from Previous Days
 
-**Memory Architecture:** Complete and tested
-- Hot → Warm → Cold → Permanent tiers ✅
-- 6hr summarization + daily chapters ✅
-- Deduplication (summary vectors deleted after chapter) ✅
-- Old chunks preserved via sourceTag ✅
-- lessons-learned.md updated daily via dream() ✅
+- Module-based pricing model (meeting was Feb 4)
+- Todoist reform (waiting on Aadil's feedback)
+- HubSpot pipeline hygiene (6 stale SIRI deals)
 
-**Scripts:** All working
-- memory_engine.js (ingest/retrieve/delete/dream) ✅
-- summarize-brief.sh (6hr cron) ✅
-- create-daily-chapter.sh (daily cron) ✅
-- auto-checkpoint.sh (token threshold trigger) ✅
+## Remaining from F1-F8
 
-**Hooks:** Token threshold monitor verified working
-- Logs at `/root/.openclaw/logs/token-monitor.log`
-- Detected 55k/64k warnings correctly
+- ~~Run `memory compact-lessons --dry-run` then execute (F8 cleanup)~~ ✅ Ran — nothing to archive (only 1 recent date-keyed section)
+- Auto-populate team profiles (Hamad, Amr, Mreefah, etc.)
+- ~~Ingest user profiles to vector DB once embedding model confirmed~~ ✅ Done — ayman.md (8 chunks), aadil.md (7 chunks)
 
-**Skills:** 6 active
-- client-intelligence, context-manager, hubspot, linkedin-intel, todoist, self-development
+---
 
-**Cron Jobs:** 9 configured, 8 enabled
+## ✅ Completed: E1-E6 Infrastructure Hardening & Event Architecture (~22:40 UTC)
 
-**Next:** Overnight self-improvement (2 AM) can start on Phase 1 cognitive enhancements
+6 features implemented — hardening plumbing, adding event abstraction, email security:
+
+- **E1:** `scripts/event-bus.js` — publish/subscribe/notify/logEvent. JSONL event log in `memory/events/YYYY-MM-DD.jsonl`. Topic routing (alert→notify, report→notify+save, email→route, memory/system→log). Retry once on failure. Bash wrapper: `scripts/emit-event.sh`.
+- **E2:** `lockedWriteJSON()` in `memory_engine.js` — mkdir-based atomic file locking compatible with bash `file-lock.sh`. Same `/tmp/openclaw-locks/` dir, 30s timeout, 5min stale detection. All state.json writes now locked.
+- **E3:** Gmail Pub/Sub config in `openclaw.json` (hooks mapping, gemini-2.5-flash, `allowUnsafeExternalContent: false`). Setup script: `scripts/setup-gmail-pubsub.sh`. **Needs `gcloud auth login` first** (token expired).
+- **E4:** `scripts/email-processor.js` — sanitization (HTML strip, Unicode cleanup, base64 removal), injection pattern scanning (8 patterns), LLM classification with sandboxed prompt, event bus routing. Auto-reply ONLY to `@iiotsolutions.sa` (hardcoded domain allowlist). Raw body never leaves processor.
+- **E5:** 4 scripts migrated to event-bus (morning-briefing, pipeline-watchdog, accountability-check, meeting-prep). Backward compatible — falls back to curl if event-bus fails to load.
+- **E6:** Graph DB re-evaluation reminder cron for Feb 13 (8 AM Riyadh). User profiles ingested to vector DB.
+
+**Pending manual step:** Run `gcloud auth login` interactively, then `./scripts/setup-gmail-pubsub.sh` to activate Gmail push notifications.
+
+**New cron job:**
+- `0 5 13 2 *` — Graph DB re-evaluation reminder via emit-event.sh

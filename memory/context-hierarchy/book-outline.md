@@ -63,14 +63,48 @@
 
 ---
 
-## Current Chapter (In Progress)
+## Chapter 4: Hierarchical Memory & Cognitive Architecture (2026-02-04)
 
-**Session:** 2026-02-04, 00:55 UTC
-**Focus:** Phase 1 implementation - building the hierarchical context system
-**Status:** Setting up architecture, creating scripts and protocols
+**What happened:** Implemented Phase 1 of hierarchical context system. Built 6-hour summarization pipeline, daily chapter creation, and book outline structure. Fixed token threshold monitor. Addressed multiple memory protocol failures (conversation continuity, checkpoint compliance).
+
+**Key outcomes:**
+- Hierarchical memory pipeline: today-brief → 6hr summaries → daily chapters → book outline
+- Cron jobs for automated summarization (every 6h) and chapter creation (23:55 daily)
+- Memory checkpoint protocol refined after critical failures
+- LinkedIn Intelligence V2 deployed (native browser, 10x faster)
+
+*Full chapter: chapters/2026-02-04.md*
+
+---
+
+## Chapter 5: Embedding Migration & System Recovery (2026-02-05)
+
+**What happened:** Gemini embedding API died (~00:00 UTC), returning 404 on all vector operations. Migrated embedding model from Gemini to OpenAI `text-embedding-3-small`. Rebuilt vector DB (417 chunks). Pipeline starvation discovered — summarize-brief.sh skipping most periods due to aggressive threshold.
+
+**Key outcomes:**
+- OpenAI embeddings operational (text-embedding-3-small)
+- Vector DB rebuilt with 417 chunks
+- Identified cron job failures (claude-opus-4-6 model error)
+- Identified pipeline issues (500-byte threshold too aggressive)
+
+*Full chapter: chapters/2026-02-05.md*
+
+---
+
+## Chapter 6: Architecture Fix & Resilience (2026-02-06)
+
+**What happened:** Comprehensive fix session addressing compounding failures from Feb 5. Cleared cron error states, removed invalid model reference, lowered summarization threshold, enabled LLM chapter generation, updated all stale Gemini documentation references, added cron failure alerting.
+
+**Key outcomes:**
+- Cron jobs restored (Daily Summary, Daily Chapter)
+- Pipeline enhanced (200-byte threshold, LLM chapter generation with fallback)
+- Documentation updated (Gemini → OpenAI across 6+ files)
+- Cron wrapper added for failure visibility
+
+*Full chapter: chapters/2026-02-06.md (pending end-of-day generation)*
 
 ---
 
 *This outline will be updated as new chapters complete. Each entry is a compressed summary designed to give future sessions (or sub-agents) the narrative continuity without re-reading full conversation logs.*
 
-**Last updated:** 2026-02-04, 00:57 UTC
+**Last updated:** 2026-02-06

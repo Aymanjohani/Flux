@@ -8,7 +8,7 @@
 |-------------|--------|-------|
 | **Telegram** | ✅ Active | Primary channel |
 | **Brave Search** | ✅ Active | Web research enabled |
-| **Memory Search** | ✅ Active | Gemini embeddings |
+| **Memory Search** | ✅ Active | OpenAI embeddings (text-embedding-3-small) |
 | **Todoist** | ✅ Active | Using Ayman's account |
 | **STT (Groq)** | ✅ Active | whisper-large-v3-turbo |
 | **Browser** | ✅ Active | Chrome headless |
@@ -26,7 +26,7 @@
 
 - `GROQ_API_KEY` ✅
 - `BRAVE_API_KEY` (in tools.web.search) ✅
-- `GEMINI_API_KEY` (in memorySearch.remote) ✅
+- `OPENAI_API_KEY` (for embeddings + memory search) ✅
 - Telegram bot token ✅
 - Todoist token (in ~/.config/todoist-cli/) ✅
 - Google OAuth (in workspace/config/google-*.json) ✅

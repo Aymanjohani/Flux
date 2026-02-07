@@ -1,6 +1,6 @@
 # Infrastructure & Technical Setup
 
-*Last updated: 2026-02-04*
+*Last updated: 2026-02-06*
 
 This file documents the technical infrastructure, integrations, and systems that power IIoT Solutions' operations.
 
@@ -73,14 +73,26 @@ Cron (2 AM Riyadh) → Marker file → Flux native orchestration → Browser too
 - Keyring password: `GOG_KEYRING_PASSWORD` (set in `~/.bashrc`)
 
 **Monitoring:**
-- Email checks: Every 2 hours via heartbeat rotation
+- ~~Email checks: Every 2 hours via heartbeat~~ → **Upgrading to Gmail Pub/Sub push (E3)**
 - Calendar checks: Every 2 hours via heartbeat rotation
+
+**Gmail Pub/Sub (E3 — configured 2026-02-06):**
+- OpenClaw hooks configured in `openclaw.json` (Gmail mapping, gemini-2.5-flash model)
+- Safety: `allowUnsafeExternalContent: false`
+- Setup script: `scripts/setup-gmail-pubsub.sh`
+- **Pending:** `gcloud auth login` → run setup script → enables instant push (replaces 2-hour polling)
+- Topic: `projects/awesome-aspect-486106-p8/topics/gog-gmail-watch`
+
+**Email Processor (E4 — 2026-02-06):**
+- `scripts/email-processor.js` — sanitization, injection scanning, LLM classification
+- Auto-reply ONLY to `@iiotsolutions.sa` (hardcoded domain allowlist)
+- Routes via event bus: urgent→Telegram, normal→briefing, low/spam→log only
 
 **Tools:**
 - GOG CLI (Google Workspace CLI)
 - Gmail API via `skills/gog/`
 
-**Status:** ✅ Active
+**Status:** ✅ Active (push notifications pending gcloud auth)
 
 ---
 
@@ -126,7 +138,8 @@ Cron (2 AM Riyadh) → Marker file → Flux native orchestration → Browser too
 **Account:** Ayman's personal account (shared access)
 
 **API Access:**
-- Token stored in OpenClaw gateway config environment variables
+- Token location: `~/.config/todoist-cli/config.json` AND `TODOIST_API_TOKEN` in gateway config
+- Token value: `c313ae015831be8ef77bfdc442d30aacf2d92630` (updated 2026-02-04)
 - API v2 REST endpoint: `https://api.todoist.com/rest/v2/`
 - Skill location: `skills/todoist/` (HubSpot skill also has Todoist integration)
 - Programmatic access: Can create/update/assign tasks via API
@@ -153,7 +166,14 @@ Cron (2 AM Riyadh) → Marker file → Flux native orchestration → Browser too
 - Weekly review automation planned
 - HubSpot integration for deal → task workflows
 
-**Status:** ✅ Active, pending restructure decision
+**Task Assignment Workflow (2026-02-04):**
+- Team reference: `config/todoist-team.json` (all team Todoist IDs and emails)
+- Assign script: `./scripts/todoist-assign.sh <task_id> <person> --notify`
+- Create+Assign: `./scripts/todoist-create-and-assign.sh <person> <task> <due> <priority> <project> --notify`
+- Email notifications: Automatic via GOG CLI (coding@iiotsolutions.sa)
+- Guide: `docs/todoist-workflow-guide.md`
+
+**Status:** ✅ Active, email notifications working, pending restructure decision
 
 ---
 
@@ -187,12 +207,12 @@ Cron (2 AM Riyadh) → Marker file → Flux native orchestration → Browser too
 
 ## Vector Memory System
 
-**Engine:** LanceDB + Gemini embeddings
+**Engine:** LanceDB + OpenAI embeddings (text-embedding-3-small)
 
 **Location:** `/root/.openclaw/workspace/.vector-db/`
 
-**Current state (2026-02-04):**
-- 298 chunks total (after latest ingest)
+**Current state (2026-02-06):**
+- 417 chunks total (rebuilt with OpenAI embeddings)
 - Score threshold: 0.5 (default)
 
 **Semantic files (SOURCE OF TRUTH):**
@@ -317,17 +337,79 @@ Hook → Pre-turn monitoring → Token estimation → Threshold check → System
 
 ---
 
+## Event Bus (E1 — 2026-02-06)
+
+**Purpose:** Thin event abstraction over filesystem + gateway. Swappable to NATS/Redis/MQTT later.
+
+**Location:** `scripts/event-bus.js`
+
+**Methods:**
+- `publish(topic, payload, options)` — log + route to gateway by topic
+- `subscribe(topic, handler)` — for long-running services (future)
+- `notify(message, options)` — shorthand: publish + Telegram delivery (always)
+- `logEvent(topic, payload)` — append to event log only (no delivery)
+
+**Event log:** `memory/events/YYYY-MM-DD.jsonl` (JSON lines, ~5 KB/day)
+**Failed events:** `memory/events/failed-YYYY-MM-DD.jsonl`
+
+**Topic routing:**
+| Prefix | Action |
+|--------|--------|
+| `alert.*` | Telegram notify (immediate) |
+| `report.*` | Telegram notify + save to reports/ |
+| `briefing.*` | Telegram notify |
+| `email.urgent` | Telegram notify |
+| `email.*` | Log only |
+| `memory.*` | Log only |
+| `system.*` | Log only |
+
+**Retry:** On gateway failure, retry once after 2s. If still fails, log to failed events.
+
+**Bash wrapper:** `scripts/emit-event.sh` — allows bash scripts to publish events.
+
+**Scripts using event bus (E5):**
+- `morning-briefing.js` → topic `briefing.daily`
+- `pipeline-watchdog.js` → topic `report.pipeline`
+- `accountability-check.js` → topic `report.accountability`
+- `meeting-prep.js` → topic `briefing.meeting.{company}`
+
+All scripts have try/catch fallback to direct curl if event-bus fails to load.
+
+**Status:** ✅ Active
+
+---
+
+## File Locking (E2 — 2026-02-06)
+
+**Purpose:** Prevent state.json corruption from concurrent writes (dream cron + user session).
+
+**Implementation:** `lockedWriteJSON()` in `memory_engine.js`
+- mkdir-based atomic locking (same protocol as bash `file-lock.sh`)
+- Lock directory: `/tmp/openclaw-locks/`
+- 30-second wait timeout, 5-minute stale detection
+- Atomic write: write to `.tmp` → rename
+
+**Compatibility:** Node.js `lockedWriteJSON()` and bash `file-lock.sh` / `safe-write.sh` can safely interleave.
+
+**Status:** ✅ Active — all state.json writes now locked
+
+---
+
 ## Cron Jobs (Scheduled Automation)
 
 **Active jobs:**
 1. Heartbeat polls (hourly)
-2. Email monitoring (every 2 hours)
+2. ~~Email monitoring (every 2 hours)~~ → Upgrading to Gmail Pub/Sub push (E3)
 3. LinkedIn Intelligence (nightly 2 AM Riyadh = 11 PM UTC)
-4. Overnight Self-Improvement (nightly 2 AM Riyadh)
+4. Morning briefing — `30 5 * * *` (8:30 AM Riyadh)
+5. Meeting prep — `35 5 * * *` (8:35 AM Riyadh)
+6. Pipeline watchdog — `0 3 * * 1` (6:00 AM Riyadh Monday)
+7. Accountability check — `0 15 * * 0` (6:00 PM Riyadh Sunday)
+8. Graph DB re-evaluation — `0 5 13 2 *` (Feb 13 one-time, 8:00 AM Riyadh)
 
 **Cron management:**
-- Use `cron` tool (not system crontab)
-- Gateway manages jobs
+- System crontab for scheduled scripts
+- Gateway manages webhook/hook jobs
 - Session target: `main` (system events) or `isolated` (agent turns)
 
 **Status:** ✅ Active
@@ -382,11 +464,15 @@ Hook → Pre-turn monitoring → Token estimation → Threshold check → System
 | **HubSpot** | ✅ Active | CRM operations | skills/hubspot/ |
 | **Todoist** | ✅ Active | Task management | ~/.config/todoist-cli/ |
 | **Recall.ai** | ✅ Active | Meeting intelligence | skills/sales-intelligence/ |
-| **Vector Memory** | ✅ Active | Knowledge search | .vector-db/ |
+| **Vector Memory** | ✅ Active | Knowledge search | memory/vector_db/ |
 | **Telegram** | ✅ Active | Primary comms | Gateway config |
 | **Browser** | ✅ Active | Web automation | OpenClaw tool |
 | **SSH Alerts** | ✅ Active | Security monitoring | /var/log/ |
 | **GitHub** | ✅ Active | Version control | github.com/Aymanjohani/Flux |
+| **Event Bus** | ✅ Active | Event routing & audit | scripts/event-bus.js |
+| **Email Processor** | ✅ Active | Email security sandbox | scripts/email-processor.js |
+| **File Locking** | ✅ Active | Concurrent write safety | memory_engine.js |
+| **Gmail Pub/Sub** | ⏳ Pending | Instant email push | scripts/setup-gmail-pubsub.sh |
 
 ---
 

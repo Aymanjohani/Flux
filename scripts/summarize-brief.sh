@@ -36,7 +36,7 @@ fi
 
 # Check if we have new content since last summary
 BRIEF_SIZE=$(wc -c < "$TODAY_BRIEF")
-if [ "$BRIEF_SIZE" -lt 500 ]; then
+if [ "$BRIEF_SIZE" -lt 200 ]; then
     log "today-brief.md too small ($BRIEF_SIZE bytes), skipping"
     exit 0
 fi
@@ -54,7 +54,7 @@ BRIEF_CONTENT=$(cat "$TODAY_BRIEF" | head -c 15000)
 SUMMARY=$(curl -s -X POST "$GATEWAY_URL/api/complete" \
     -H "Content-Type: application/json" \
     -d "$(jq -n --arg content "$BRIEF_CONTENT" '{
-        "prompt": "Summarize the following daily brief into a concise 6-hour summary. Focus on: decisions made, tasks completed, key discussions, and pending items. Keep it under 500 words.\n\n" + $content + "\n\nSummary:",
+        "prompt": ("Summarize the following daily brief into a concise 6-hour summary. Focus on: decisions made, tasks completed, key discussions, and pending items. Keep it under 500 words.\n\n" + $content + "\n\nSummary:"),
         "max_tokens": 1000
     }')" \
     --max-time 60 2>/dev/null | jq -r '.completion // empty') || true

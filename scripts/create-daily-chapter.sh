@@ -49,20 +49,31 @@ done
 # Use LLM to create cohesive chapter
 log "Generating chapter via LLM..."
 
-CHAPTER_CONTENT=$(curl -s -X POST "$GATEWAY_URL/api/complete" \
+CHAPTER_CONTENT=""
+LLM_CHAPTER=$(curl -s -X POST "$GATEWAY_URL/api/complete" \
     -H "Content-Type: application/json" \
-    -d "$(jq -n --arg content "$COMBINED_CONTENT" --arg date "$DATE" '{
-        "prompt": "Create a cohesive daily chapter from these 6-hour summaries. Structure it as:\n\n# Chapter: " + $date + "\n\n## Overview\n(2-3 sentence day summary)\n\n## Key Decisions\n(bullet points)\n\n## Work Completed\n(bullet points)\n\n## Pending Items\n(bullet points)\n\n## Notes for Future Reference\n(anything important to remember)\n\nSummaries:\n" + $content,
+    -d "$(jq -n --arg content "$COMBINED_CONTENT" '{
+        "prompt": ("Create a cohesive daily chapter from these 6-hour summaries. Include: Day Summary, Key Events (with subheadings), and Infrastructure Notes if relevant. Be concise but comprehensive.\n\n" + $content),
         "max_tokens": 2000
     }')" \
-    --max-time 120 2>/dev/null | jq -r '.completion // empty') || true
+    --max-time 90 2>/dev/null | jq -r '.completion // empty') || true
 
-# If LLM fails, create simple concatenation
-if [ -z "$CHAPTER_CONTENT" ]; then
-    log "LLM chapter creation failed, using simple concatenation"
+if [ -n "$LLM_CHAPTER" ]; then
+    log "LLM chapter generation successful"
     CHAPTER_CONTENT="# Chapter: $DATE
 
-## Combined Summaries
+$LLM_CHAPTER
+"
+else
+    # Fallback: simple concatenation if LLM fails
+    log "LLM chapter generation failed, using simple concatenation"
+    CHAPTER_CONTENT="# Chapter: $DATE
+
+## Day Summary
+
+This chapter combines $SUMMARY_COUNT summaries from $DATE.
+
+## Summaries
 
 $COMBINED_CONTENT
 "
@@ -92,8 +103,8 @@ fi
 
 # Update book outline
 if [ -f "$BOOK_OUTLINE" ]; then
-    # Extract first 200 chars of overview for book outline
-    OVERVIEW=$(echo "$CHAPTER_CONTENT" | grep -A5 "## Overview" | tail -n+2 | head -c 200)
+    # Extract first 200 chars for book outline (try multiple section headers)
+    OVERVIEW=$(echo "$CHAPTER_CONTENT" | grep -A5 -E "## (Overview|Summary|Day Summary)" | tail -n+2 | head -c 200 || echo "$CHAPTER_CONTENT" | head -c 200)
 
     cat >> "$BOOK_OUTLINE" << EOF
 

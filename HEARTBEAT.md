@@ -41,14 +41,15 @@ If marker exists:
 
 ## Self-Development (Daily + Weekly)
 
-**Daily (2 AM Riyadh time):**
-Every night during quiet hours:
-1. Check `memory/goals.md` for capability gaps
-2. Build a new skill or improve existing one
-3. Research something helpful for IIoT Solutions
-4. Read OpenClaw docs to learn new capabilities
-5. Improve documentation or tooling
-6. Log what was built in daily memory file
+**Daily (2:30 AM Riyadh time - after LinkedIn intel completes):**
+Two action points - both focused on memory:
+1. **Development:** Build/improve hot/warm memory solutions, tools, and optimizations
+2. **Research:** Study memory management techniques, context optimization, consolidation strategies
+
+Document findings and solutions in daily memory file.
+
+**Model:** Use opus4.5 with thinking mode for self-development
+**Scope:** Memory issues ONLY - no other development topics
 
 **Weekly Reviews (Fridays 6 AM Riyadh time):**
 Formal weekly reflection:

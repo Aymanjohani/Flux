@@ -1,6 +1,6 @@
-# Development Goals — 2026-02-02
+# Development Goals — 2026-02-07
 
-Last updated: February 4, 2026
+Last updated: February 7, 2026 (Weekly Review #2)
 
 ## 🔴 PRIORITY: Cognitive Architecture Research (2026-02-04)
 
@@ -11,6 +11,8 @@ Last updated: February 4, 2026
 2. **Context Management** - Rolling summarization, hierarchical memory, token economics
 3. **Self-Awareness** - Metacognition, confidence scoring, knowledge gap detection
 4. **Session Architecture** - Multi-agent state sync, memory handoff protocols
+5. **Personal Profiles System** - Employee profiles for communication style, preferences (added 2026-02-04)
+6. **Shared Memory Access Layer** - Scriptable interface for atomic memory operations (added 2026-02-04)
 
 **Approach:**
 - Deep research (3-4 hours focused time)
@@ -23,6 +25,24 @@ Last updated: February 4, 2026
 This isn't about adding features. It's about evolving my cognitive architecture. Current approach (vector memory + checkpoints + protocols) has limits. Need to research state-of-the-art and design better systems.
 
 **Timeline:** Tonight (2 AM Riyadh self-development session)
+
+**New Topics Added (2026-02-04):**
+
+**5. Personal Profiles System**
+- **Problem:** Memory is company-focused (correct), but lacks personal context per employee
+- **Need:** Communication styles, role-specific context, preferences, working patterns
+- **Use case:** Know that Aadil delegates admin tasks vs Ayman does strategic discussions
+- **Research:** How to structure profiles, what metadata matters, how to update/maintain
+- **Output:** Profile schema + integration with existing memory
+
+**6. Shared Memory Access Layer**
+- **Problem:** Ad-hoc manual file edits to `infrastructure.md`, `team.md`, etc.
+- **Need:** Scriptable, standardized interface for cross-session memory updates
+- **Benefits:** Atomic operations, audit trail, conflict resolution, programmatic access
+- **Research:** Design CLI API (e.g., `./scripts/memory update company "fact"`), locking mechanisms, versioning
+- **Output:** Memory access abstraction layer that all sessions use
+
+**Key insight from discussion:** Company facts don't need attribution (correct current approach), but personal working relationships DO need tracking. And shared memory needs standardized access patterns.
 
 ---
 
@@ -87,7 +107,29 @@ This isn't about adding features. It's about evolving my cognitive architecture.
 
 ## Stretch Goals (This Month)
 
-### 5. Build Self-Sufficiency Tool ✅ COMPLETED (2026-02-04)
+### 5. Build Session-Reset Detector Hook 🔧 SCHEDULED
+**Problem:** Telegram disconnects (or any session reset) cause context loss
+
+**Solution:** Hook that detects token count drops and auto-triggers memory checkpoint
+- Monitor token count changes per session
+- Detect dramatic drops (e.g., 50k → 2k = reset happened)
+- Auto-run `./scripts/memory-checkpoint.sh` before context is lost
+
+**Implementation:**
+```javascript
+// .openclaw/hooks/session-reset-detector/handler.js
+if (previousTokens > 20000 && currentTokens < 5000) {
+  exec('./scripts/memory-checkpoint.sh')
+}
+```
+
+**Why:** Simpler than preventing resets - just save when they happen
+
+**Status:** Documented in `memory/problems/session-persistence-on-reconnect.md`, scheduled for nightly self-development
+
+**Scheduled:** 2 AM Riyadh time (self-development session)
+
+### 6. Build Self-Sufficiency Tool ✅ COMPLETED (2026-02-04)
 **Built:** `scripts/check-before-ask.sh` - Automated pre-flight check
 
 **Features implemented:**

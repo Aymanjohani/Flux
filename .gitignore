@@ -46,3 +46,7 @@ __pycache__/
 *.swp
 *.swo
 *~
+
+# Large media files
+meetings/**/*.mp4
+meetings/**/*.mp3

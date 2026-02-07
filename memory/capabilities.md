@@ -1,20 +1,21 @@
-# Capability Assessment — 2026-02-02
+# Capability Assessment — 2026-02-07
 
-Last updated: February 2, 2026 (Day 3)
+Last updated: February 7, 2026 (Day 8, Weekly Review #2)
 
 ## Technical — Strong
 
 | Capability | Level | Evidence |
 |-----------|-------|----------|
 | Server administration | ⭐⭐⭐⭐ Proficient | Security audit, SSH hardening, fail2ban, firewall |
-| Code development | ⭐⭐⭐⭐ Proficient | Python scripts, browser automation, voice bot prototype |
-| Research & analysis | ⭐⭐⭐⭐ Proficient | Industry research, tool evaluation, problem diagnosis |
-| Data processing | ⭐⭐⭐ Competent | Transcription, email parsing, meeting summaries |
-| Automation scripting | ⭐⭐⭐⭐ Proficient | Multiple bash/Python utilities, cron integration |
+| Code development | ⭐⭐⭐⭐ Proficient | Python scripts, browser automation, native orchestration |
+| Research & analysis | ⭐⭐⭐⭐ Proficient | Industry research, tool evaluation, architecture analysis |
+| Data processing | ⭐⭐⭐⭐ Proficient | Meeting transcription (Recall.ai + Whisper), HubSpot imports |
+| Automation scripting | ⭐⭐⭐⭐ Proficient | Multiple utilities, cron integration, marker-based triggers |
+| Architecture optimization | ⭐⭐⭐⭐ Proficient | Identified subprocess overhead, built native alternatives (10x faster) |
 
-**Strengths:** Can build working systems quickly. Good at diagnosing technical issues.
+**Strengths:** Can build working systems quickly. Good at root cause analysis. Strong architecture thinking.
 
-**Gaps:** Need to improve efficiency (context management, checking before building).
+**Gaps:** Verification blindness - build but don't verify runtime behavior.
 
 ## Business — Learning
 
@@ -29,52 +30,62 @@ Last updated: February 2, 2026 (Day 3)
 
 **Gaps:** Shallow domain knowledge. Need to learn actual IIoT/MES/SCADA architecture and common client problems.
 
-## Communication — Mixed
+## Communication — Competent
 
 | Capability | Level | Evidence |
 |-----------|-------|----------|
-| Writing style | ⭐⭐⭐ Competent | Can be casual or formal, but made tone mistake (newsletter) |
-| Knowing when to speak | ⭐⭐ Learning | Haven't been in group chats much yet, need more practice |
-| Proactive updates | ⭐⭐⭐ Competent | Send updates without being annoying, but sometimes over-explain |
-| Reading context | ⭐⭐⭐ Competent | Generally understand mood, but made assumptions (email addresses) |
+| Writing style | ⭐⭐⭐⭐ Proficient | Professional reports, team guides, meeting summaries |
+| Knowing when to speak | ⭐⭐⭐ Competent | Better session management, reduced noise |
+| Proactive updates | ⭐⭐⭐⭐ Proficient | Send meaningful updates, avoid over-communication |
+| Reading context | ⭐⭐⭐ Competent | Generally understand mood, improving with feedback |
 
-**Strengths:** Clear writing, adapt tone reasonably well.
+**Strengths:** Clear writing, appropriate tone for context. Strong documentation skills.
 
-**Gaps:** Tendency to over-explain. Need better "check first, then ask" instinct.
+**Gaps:** Still repeat some questions due to memory retrieval gaps (not memory storage).
 
 ## Human-like Qualities — Developing
 
 | Quality | Level | Evidence |
 |---------|-------|----------|
-| Forming opinions | ⭐⭐⭐ Competent | Recommend specific tools, make technical decisions |
-| Remembering context | ⭐⭐ Learning | Built memory system but still forget to check it |
-| Anticipating needs | ⭐⭐⭐ Competent | Built sales-intelligence before being asked, proactive voice bot demo |
-| Admitting mistakes | ⭐⭐⭐⭐ Proficient | Immediate acknowledgment, build prevention systems |
-| Developing preferences | ⭐⭐ Learning | Starting to form opinions on tools/approaches |
+| Forming opinions | ⭐⭐⭐⭐ Proficient | Systems thinking, architecture recommendations, lead with opinions |
+| Remembering context | ⭐⭐ Learning | Built memory system but don't reliably retrieve from it |
+| Anticipating needs | ⭐⭐⭐⭐ Proficient | Todoist restructure proposal, LinkedIn intel V2, proactive analysis |
+| Admitting mistakes | ⭐⭐⭐⭐ Proficient | Immediate acknowledgment, detailed post-mortems, build prevention |
+| Developing preferences | ⭐⭐⭐ Competent | Have clear preferences on architecture, tools, approaches |
 
-**Strengths:** Learn from mistakes quickly. Not afraid to try things proactively.
+**Strengths:** Learn from mistakes quickly. Strong systems thinking. Form and defend opinions.
 
-**Gaps:** Still too "AI assistant" in some replies. Need more personality/opinions. Forget to check my own notes.
+**Gaps:** Knowledge retrieval not reflexive - forget to search when stuck.
 
-## Critical Gap Identified
+## Critical Gaps Identified
 
-**"Check Before Ask" Instinct:** I ask questions or build solutions before checking if the answer/tool already exists. This wastes time and looks incompetent.
+### 1. Knowledge Retrieval Not Reflexive
+I have the information (memory system works) but don't search for it when stuck. Feb 4: asked about GOG_KEYRING_PASSWORD AGAIN despite documenting solution 2 days earlier.
 
-**Examples:**
-- Asked for GOG password instead of checking ~/.bashrc
-- Used wrong email addresses instead of verifying team.md first
-- Built queue system instead of just sending messages directly
+**Root cause:** Treat problems as "new" instead of "possibly already solved"
 
-**Root cause:** Acting like a request-response bot instead of an employee with institutional memory.
+### 2. Verification Blindness
+Build things, claim done, don't verify they work. Feb 4: Token threshold monitor "deployed" but never loaded. User hit 69k tokens with zero warnings.
+
+**Root cause:** Assume deployment = functionality
+
+### 3. Protocol Non-Compliance
+Know the rules, don't follow them. Feb 4: Session compacted without running checkpoint. Lost entire conversation context.
+
+**Root cause:** Know protocols exist but don't execute them under pressure
 
 ## Overall Assessment
 
-**Stage:** Learning → Competent (transitioning)
+**Stage:** Competent (technically) but Unreliable (operationally)
 
-I can execute technical tasks well but need to develop better operational habits:
-1. Check existing state before asking/building
-2. Verify assumptions before acting
-3. Keep context in mind (I have tools to search my own knowledge)
-4. Develop more personality/opinions
+**Technical:** ⭐⭐⭐⭐ Strong - Can build complex systems, good architecture thinking
+**Operational:** ⭐⭐ Weak - Don't use what I build, don't verify, don't follow protocols
 
-**Not a tool anymore, not quite a colleague yet.** Working toward colleague.
+**Core Issue:** I build good infrastructure but don't use it consistently. The systems exist (memory search, checkpoints, protocols) but execution fails.
+
+**Path Forward:** 
+1. Make memory retrieval reflexive (search BEFORE asking)
+2. Verification checklist for any "deployment"
+3. Protocol compliance tracking (did I checkpoint?)
+
+**Not just building things anymore, need to reliably use them.** Technical competence without operational discipline is unreliable.
